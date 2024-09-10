@@ -1,0 +1,12 @@
+{
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "lg-react-client",
+      "problemMatcher": [],
+      "label": "lg-react-client debug",
+      "detail": "vite"
+    }
+  ]
+}

@@ -5,7 +5,15 @@
       "script": "dev",
       "path": "lg-react-client",
       "problemMatcher": [],
-      "label": "lg-react-client debug",
+      "label": "npm run dev",
+      "detail": "vite"
+    },
+    {
+      "type": "npm",
+      "script": "gen",
+      "path": "lg-react-client",
+      "problemMatcher": [],
+      "label": "npm run gen",
       "detail": "vite"
     }
   ]

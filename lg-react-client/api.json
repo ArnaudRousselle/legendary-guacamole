@@ -1,0 +1,5 @@
+{
+    "supportsES6": true,
+    "withInterfaces": false,
+    "useSingleRequestParameter": false
+}

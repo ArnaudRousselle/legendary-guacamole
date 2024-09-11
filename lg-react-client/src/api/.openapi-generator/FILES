@@ -1,0 +1,9 @@
+.openapi-generator-ignore
+apis/LegendaryGuacamoleWebApiApi.ts
+apis/index.ts
+index.ts
+models/DateOnly.ts
+models/DayOfWeek.ts
+models/WeatherForecast.ts
+models/index.ts
+runtime.ts

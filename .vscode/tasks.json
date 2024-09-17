@@ -6,7 +6,7 @@
       "path": "lg-react-client",
       "problemMatcher": [],
       "label": "npm run dev",
-      "detail": "vite"
+      "detail": "Start debug"
     },
     {
       "type": "npm",
@@ -14,7 +14,7 @@
       "path": "lg-react-client",
       "problemMatcher": [],
       "label": "npm run gen",
-      "detail": "vite"
+      "detail": "Generate API"
     }
   ]
 }

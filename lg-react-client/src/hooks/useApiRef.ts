@@ -3,8 +3,7 @@ import { BaseAPI, Configuration, FetchParams } from "../api";
 import { getBasePath } from "../utils/basePath";
 
 export function useApiRef<T extends BaseAPI>(
-  apiClass: new (c: Configuration) => T,
-  getToken: () => string
+  apiClass: new (c: Configuration) => T
 ): MutableRefObject<T> {
   const apiRef = useRef(
     new apiClass(
@@ -31,23 +30,7 @@ export function useApiRef<T extends BaseAPI>(
           return response;
         },
       })
-    ).withMiddleware({
-      pre: async ({ url, init }) => {
-        const token = getToken();
-        const headers: HeadersInit = token
-          ? {
-              ...init.headers,
-              ["Authorization"]: "Bearer " + token,
-            }
-          : { ...init.headers };
-
-        const params: FetchParams = {
-          url,
-          init: { ...init, headers },
-        };
-        return params;
-      },
-    })
+    )
   );
   return apiRef;
 }

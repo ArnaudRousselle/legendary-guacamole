@@ -25,7 +25,7 @@ writeFileSync(
 import {
 ${classNames.map((c) => `  ${c},`).join("\n")}
 } from "../api";
-import { useApiRef } from "../hooks/useApiRef";
+import { useApiRef } from "../hooks";
 
 export interface IBaseApiContext {
 ${classNames.map((c) => `  ${camelCase(c)}: ${c};`).join("\n")}
@@ -35,9 +35,9 @@ export const defaultBaseApiContextValues: IBaseApiContext = {
 ${classNames.map((c) => `  ${camelCase(c)}: new ${c}(),`).join("\n")}
 };
 
-export function useAllApisRef(getToken: () => string): IBaseApiContext {
+export function useAllApisRef(): IBaseApiContext {
 ${classNames
-  .map((c) => `  const ${camelCase(c)}Ref = useApiRef(${c}, getToken);`)
+  .map((c) => `  const ${camelCase(c)}Ref = useApiRef(${c});`)
   .join("\n")}
 
   return {

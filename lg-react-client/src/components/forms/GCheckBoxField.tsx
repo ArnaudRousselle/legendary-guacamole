@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { Checkbox } from "@mui/material";
 import {
   Control,
   FieldPathByValue,
@@ -10,31 +10,30 @@ import { ErrorMessage } from "./ErrorMessage";
 
 interface IProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPathByValue<TFieldValues, string> = FieldPathByValue<
+  TName extends FieldPathByValue<TFieldValues, boolean> = FieldPathByValue<
     TFieldValues,
-    string
+    boolean
   >
 > extends UseControllerProps<TFieldValues, TName> {
   control: Control<TFieldValues>;
   label?: string | JSX.Element;
 }
 
-export const GTextField = <TFieldValues extends FieldValues = FieldValues>({
+export const GCheckBoxField = <TFieldValues extends FieldValues = FieldValues>({
   label,
   ...controllerProps
 }: IProps<TFieldValues>) => {
   const { field, fieldState } = useController({
     ...controllerProps,
-    defaultValue: controllerProps.defaultValue ?? ("" as any),
+    defaultValue: controllerProps.defaultValue ?? (false as any),
   });
 
   return (
     <>
       {label}
-      <TextField
-        type="text"
-        value={field.value ?? ""}
-        onChange={(evt) => field.onChange(evt.target.value)}
+      <Checkbox
+        checked={field.value}
+        onChange={(evt) => field.onChange(evt.target.checked)}
         onBlur={field.onBlur}
       />
       <ErrorMessage fieldState={fieldState} />

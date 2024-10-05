@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "./contexts";
 import { useForm } from "react-hook-form";
-
-//todo ARNAUD: à conserver
-type ShortDate = {
-  year: number;
-  month: number;
-  day: number;
-};
+import { GTextField } from "./components/forms/GTextField";
+import { GCheckBoxField } from "./components/forms/GCheckBoxField";
+import { GNumericField } from "./components/forms/GNumericField";
+import { GDateField, GSelectField, ShortDate } from "./components/forms";
 
 type FormData = {
   date: ShortDate | null;
   name: string;
   amount: number | null;
+  isOk: boolean;
+  typeStr: string | null;
+  typeNumber: number | null;
 };
 
 export const TestArnaud = () => {
@@ -38,7 +38,40 @@ export const TestArnaud = () => {
       {data.map((d, i) => (
         <div key={i}>{d.summary}</div>
       ))}
-      <form onSubmit={handleSubmit((v) => console.log("submit", v))}></form>
+      <div>
+        <GTextField control={control} name="name" rules={{ required: true }} />
+        <GCheckBoxField control={control} name="isOk" />
+        <GNumericField control={control} name="amount" />
+        <GDateField control={control} name="date" />
+        <GSelectField
+          control={control}
+          data={[
+            { id: "A", label: "aaa" },
+            { id: "B", label: "bbb" },
+            { id: "C", label: "ccc" },
+          ]}
+          labelKey="label"
+          keyProps="id"
+          name="typeStr"
+        />
+        <GSelectField
+          control={control}
+          data={[
+            { id: 1, label: "111" },
+            { id: 2, label: "222" },
+            { id: 3, label: "333" },
+          ]}
+          labelKey="label"
+          keyProps="id"
+          name="typeNumber"
+        />
+        <button
+          type="button"
+          onClick={() => handleSubmit((v) => console.log("submit", v))()}
+        >
+          ok
+        </button>
+      </div>
     </>
   );
 };

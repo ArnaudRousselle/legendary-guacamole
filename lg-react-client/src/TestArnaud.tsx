@@ -5,6 +5,7 @@ import { GTextField } from "./components/forms/GTextField";
 import { GCheckBoxField } from "./components/forms/GCheckBoxField";
 import { GNumericField } from "./components/forms/GNumericField";
 import { GDateField, GSelectField, ShortDate } from "./components/forms";
+import { Box, Button } from "@mui/material";
 
 type FormData = {
   date: ShortDate | null;
@@ -38,7 +39,7 @@ export const TestArnaud = () => {
       {data.map((d, i) => (
         <div key={i}>{d.summary}</div>
       ))}
-      <div>
+      <Box>
         <GTextField control={control} name="name" rules={{ required: true }} />
         <GCheckBoxField control={control} name="isOk" />
         <GNumericField control={control} name="amount" />
@@ -65,13 +66,13 @@ export const TestArnaud = () => {
           keyProps="id"
           name="typeNumber"
         />
-        <button
+        <Button
           type="button"
           onClick={() => handleSubmit((v) => console.log("submit", v))()}
         >
           ok
-        </button>
-      </div>
+        </Button>
+      </Box>
     </>
   );
 };

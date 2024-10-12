@@ -1,4 +1,5 @@
-using LegendaryGuacamole.WebApi.Model;
+using LegendaryGuacamole.WebApi.Channels;
+using LegendaryGuacamole.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,10 @@ builder.Services.AddCors(o =>
                     .AllowAnyHeader();
         }));
 
+builder.Services.AddSingleton<WorkspaceChannel>();
+builder.Services.AddHostedService<WorkspaceService>();
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,18 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseCors("CorsPolicy");
 }
 
+app.UseRouting();
 app.UseHttpsRedirection();
-
-const string fileName = "./data.lgc";
-
-Workspace workspace = File.Exists(fileName)
-    ? System.Text.Json.JsonSerializer.Deserialize<Workspace>(File.ReadAllText(fileName))!
-    : new();
-
-if (!File.Exists(fileName))
-
-    app.MapGet("/billings", () => workspace.Billings.Select(n => n.ToDtos()))
-    .WithName("GetBillings")
-    .WithOpenApi();
+app.MapDefaultControllerRoute();
 
 app.Run();

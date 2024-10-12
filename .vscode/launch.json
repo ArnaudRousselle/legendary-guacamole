@@ -8,7 +8,7 @@
       "name": "Debug WebAPI",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/WebApi/LegendaryGuacamole.WebApi/LegendaryGuacamole.WebApi.csproj"
+      "projectPath": "${workspaceFolder}/LegendaryGuacamole.WebApi/LegendaryGuacamole.WebApi.csproj"
     }
   ]
 }

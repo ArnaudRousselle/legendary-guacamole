@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{9EC00FC3-65C7-48BA-9F59-3E7C6592115C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegendaryGuacamole.WebApi", "WebApi\LegendaryGuacamole.WebApi\LegendaryGuacamole.WebApi.csproj", "{DA62F592-8C25-4AE6-86DB-77B1467EBE14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegendaryGuacamole.WebApi", "LegendaryGuacamole.WebApi\LegendaryGuacamole.WebApi.csproj", "{0B5D2C5C-09BC-47DB-86FC-F18287B072BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,18 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DA62F592-8C25-4AE6-86DB-77B1467EBE14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA62F592-8C25-4AE6-86DB-77B1467EBE14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA62F592-8C25-4AE6-86DB-77B1467EBE14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA62F592-8C25-4AE6-86DB-77B1467EBE14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B5D2C5C-09BC-47DB-86FC-F18287B072BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B5D2C5C-09BC-47DB-86FC-F18287B072BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B5D2C5C-09BC-47DB-86FC-F18287B072BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B5D2C5C-09BC-47DB-86FC-F18287B072BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DA62F592-8C25-4AE6-86DB-77B1467EBE14} = {9EC00FC3-65C7-48BA-9F59-3E7C6592115C}
-	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C2047DB7-9903-4943-986F-C92EC7D83AA1}
+		SolutionGuid = {EFE5B111-0593-489F-B9C2-95F920797DC2}
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Services;
 
@@ -33,33 +34,29 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var type = typeof(WorkspaceQuery<,>);
-
-var test = AppDomain.CurrentDomain
-    .GetAssemblies()
-    .SelectMany(s => s.GetTypes())
-    .Where(t => t.BaseType == type)
-    .ToList();
-
 AppDomain.CurrentDomain
     .GetAssemblies()
     .SelectMany(s => s.GetTypes())
-    .Where(p => type.IsAssignableFrom(p) && !p.IsAbstract)
+    .Where(t => t.BaseType != null && t.BaseType.IsAssignableTo(typeof(IWorkspaceQuery)))
     .ToList()
     .ForEach(t =>
     {
-        var genericArguments = t.GetGenericArguments();
+        var genericArguments = t.BaseType!.GetGenericArguments();
         var inputType = genericArguments[0];
         var outputType = genericArguments[1];
 
-        // app.MapGet($"/{t.Name[..1].ToLower()}{t.Name[1..]}", async (aaa) =>
-        // {
-        //     await channel.QueryAsync(list);
-        //     var billings = await list.Result;
-        //     return billings ?? [];
-        // })
-        // .WithName(t.Name)
-        // .WithOpenApi();
+        DynamicMethod method = new DynamicMethod(
+            t.Name,
+            outputType,
+            [inputType],
+            typeof(Program).Module);
+
+        app.MapPost($"/{t.Name[..1].ToLower()}{t.Name[1..]}", async () =>
+        {
+            await Task.CompletedTask;
+        })
+        .WithName(t.Name)
+        .WithOpenApi();
     });
 
 app.Run();

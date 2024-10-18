@@ -59,7 +59,3 @@ public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, 
         return channel.Reader.TryRead(out TOutput? result) ? result : default;
     }
 }
-
-public abstract class WorkspaceListingQuery<TInput, TOutput> : WorkspaceQuery<TInput, TOutput>
-{
-}

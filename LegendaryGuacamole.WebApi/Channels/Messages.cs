@@ -1,20 +1,8 @@
 namespace LegendaryGuacamole.WebApi.Channels;
 
-public class AddBilling : WorkspaceQuery
-{
-    public required Dtos.Billing Billing { get; init; }
-}
+public record Empty { }
 
-public class DeleteBilling : WorkspaceQuery
-{
-    public required Guid BillingId { get; init; }
-}
-
-public class EditBilling : WorkspaceQuery
-{
-    public required Dtos.Billing Billing { get; init; }
-}
-
-public class ListBillings() : WorkspaceQuery<Dtos.Billing[]>
-{
-}
+public class AddBilling : WorkspaceQuery<Dtos.Billing, Empty> { }
+public class DeleteBilling : WorkspaceQuery<Guid, Empty> { }
+public class EditBilling : WorkspaceQuery<Dtos.Billing, Empty> { }
+public class ListBillings() : WorkspaceListingQuery<Empty, Dtos.Billing[]> { }

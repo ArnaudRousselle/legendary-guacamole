@@ -59,46 +59,46 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
         billings.Add(new()
         {
             Id = Guid.NewGuid(),
-            Amount = m.Billing.Amount,
-            Checked = m.Billing.Checked,
-            Comment = m.Billing.Comment,
-            IsArchived = m.Billing.IsArchived,
-            IsSaving = m.Billing.IsSaving,
-            Title = m.Billing.Title,
-            ValuationDate = m.Billing.ValuationDate.ToDateOnly()
+            Amount = m.Input.Amount,
+            Checked = m.Input.Checked,
+            Comment = m.Input.Comment,
+            IsArchived = m.Input.IsArchived,
+            IsSaving = m.Input.IsSaving,
+            Title = m.Input.Title,
+            ValuationDate = m.Input.ValuationDate.ToDateOnly()
         });
 
-        await m.OnCompleted(true);
+        await m.OnCompleted(new());
     }
 
     private async Task HandleAsync(DeleteBilling m)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == m.BillingId);
+        var billing = billings.SingleOrDefault(b => b.Id == m.Input);
 
         if (billing == null)
             return;
 
         billings.Remove(billing);
 
-        await m.OnCompleted(true);
+        await m.OnCompleted(new());
     }
 
     private async Task HandleAsync(EditBilling m)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == m.Billing.Id);
+        var billing = billings.SingleOrDefault(b => b.Id == m.Input.Id);
 
         if (billing == null)
             return;
 
-        billing.Amount = m.Billing.Amount;
-        billing.Checked = m.Billing.Checked;
-        billing.Comment = m.Billing.Comment;
-        billing.IsArchived = m.Billing.IsArchived;
-        billing.IsSaving = m.Billing.IsSaving;
-        billing.Title = m.Billing.Title;
-        billing.ValuationDate = m.Billing.ValuationDate.ToDateOnly();
+        billing.Amount = m.Input.Amount;
+        billing.Checked = m.Input.Checked;
+        billing.Comment = m.Input.Comment;
+        billing.IsArchived = m.Input.IsArchived;
+        billing.IsSaving = m.Input.IsSaving;
+        billing.Title = m.Input.Title;
+        billing.ValuationDate = m.Input.ValuationDate.ToDateOnly();
 
-        await m.OnCompleted(true);
+        await m.OnCompleted(new());
     }
 
     private async Task HandleAsync(ListBillings m)

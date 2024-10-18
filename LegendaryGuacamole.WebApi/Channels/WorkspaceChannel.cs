@@ -14,7 +14,7 @@ public class WorkspaceChannel
 
     public ChannelReader<IWorkspaceQuery> Reader { get => channel.Reader; }
 
-    public async Task QueryAsync<T>(IWorkspaceQuery<T> query)
+    public async Task QueryAsync<TInput, TOutput>(IWorkspaceQuery<TInput, TOutput> query)
     {
         await channel.Writer.WriteAsync(query);
     }
@@ -24,14 +24,17 @@ public interface IWorkspaceQuery
 {
 }
 
-public interface IWorkspaceQuery<T> : IWorkspaceQuery
+public interface IWorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
 {
-    public Task OnCompleted(T result);
+    public TInput Input { get; set; }
+    public Task OnCompleted(TOutput result);
 }
 
-public abstract class WorkspaceQuery : IWorkspaceQuery<bool>
+public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, TOutput>
 {
-    private Channel<bool> channel = Channel.CreateUnbounded<bool>(
+    public required TInput Input { get; set; }
+
+    private Channel<TOutput> channel = Channel.CreateUnbounded<TOutput>(
         new UnboundedChannelOptions
         {
             SingleReader = true,
@@ -39,48 +42,24 @@ public abstract class WorkspaceQuery : IWorkspaceQuery<bool>
         }
     );
 
-    public async Task OnCompleted(bool _)
-    {
-        await channel.Writer.WriteAsync(true);
-        channel.Writer.Complete();
-    }
-
-    public Task Result
-    {
-        get => ReadResult();
-    }
-
-    private async Task ReadResult()
-    {
-        await channel.Reader.WaitToReadAsync();
-        channel.Reader.TryRead(out _);
-    }
-}
-
-public abstract class WorkspaceQuery<T> : IWorkspaceQuery<T>
-{
-    private Channel<T> channel = Channel.CreateUnbounded<T>(
-        new UnboundedChannelOptions
-        {
-            SingleReader = true,
-            SingleWriter = false
-        }
-    );
-
-    public async Task OnCompleted(T result)
+    public async Task OnCompleted(TOutput result)
     {
         await channel.Writer.WriteAsync(result);
         channel.Writer.Complete();
     }
 
-    public Task<T?> Result
+    public Task<TOutput?> Result
     {
         get => ReadResult();
     }
 
-    private async Task<T?> ReadResult()
+    private async Task<TOutput?> ReadResult()
     {
         await channel.Reader.WaitToReadAsync();
-        return channel.Reader.TryRead(out T? result) ? result : default;
+        return channel.Reader.TryRead(out TOutput? result) ? result : default;
     }
+}
+
+public abstract class WorkspaceListingQuery<TInput, TOutput> : WorkspaceQuery<TInput, TOutput>
+{
 }

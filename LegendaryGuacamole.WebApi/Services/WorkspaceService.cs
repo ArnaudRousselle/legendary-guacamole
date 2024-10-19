@@ -39,17 +39,24 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 {
                     switch (message)
                     {
-                        case AddBilling m:
+                        case AddBilling.Query m:
                             await HandleAsync(m);
                             break;
-                        case DeleteBilling m:
+                        case DeleteBilling.Query m:
                             await HandleAsync(m);
                             break;
-                        case EditBilling m:
+                        case EditBilling.Query m:
                             await HandleAsync(m);
                             break;
-                        case ListBillings m:
+                        case GetBilling.Query m:
                             await HandleAsync(m);
+                            break;
+                        case ListBillings.Query m:
+                            await HandleAsync(m);
+                            break;
+                        default:
+                            logger.LogWarning($"{message.GetType().Name} not implemented");
+                            await message.OnError();
                             break;
                     }
                 }
@@ -62,7 +69,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         }
     }
 
-    private async Task HandleAsync(AddBilling m)
+    private async Task HandleAsync(AddBilling.Query m)
     {
         var newId = Guid.NewGuid();
         billings.Add(new()
@@ -80,7 +87,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         await m.OnSuccess(newId);
     }
 
-    private async Task HandleAsync(DeleteBilling m)
+    private async Task HandleAsync(DeleteBilling.Query m)
     {
         var billing = billings.SingleOrDefault(b => b.Id == m.Input);
 
@@ -95,7 +102,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         await m.OnSuccess(true);
     }
 
-    private async Task HandleAsync(EditBilling m)
+    private async Task HandleAsync(EditBilling.Query m)
     {
         var billing = billings.SingleOrDefault(b => b.Id == m.Input.Id);
 
@@ -116,10 +123,31 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         await m.OnSuccess(true);
     }
 
-    private async Task HandleAsync(ListBillings m)
+    private async Task HandleAsync(GetBilling.Query m)
+    {
+        var b = billings.Single(b => b.Id == m.Input);
+        await m.OnSuccess(new()
+        {
+            Id = b.Id,
+            ValuationDate = new()
+            {
+                Year = b.ValuationDate.Year,
+                Month = b.ValuationDate.Month,
+                Day = b.ValuationDate.Day
+            },
+            Title = b.Title,
+            Amount = b.Amount,
+            Checked = b.Checked,
+            Comment = b.Comment,
+            IsArchived = b.IsArchived,
+            IsSaving = b.IsSaving
+        });
+    }
+
+    private async Task HandleAsync(ListBillings.Query m)
     {
         await m.OnSuccess(billings
-            .Select(b => new Dtos.Billing
+            .Select(b => new ListBillings.Output
             {
                 Id = b.Id,
                 ValuationDate = new()

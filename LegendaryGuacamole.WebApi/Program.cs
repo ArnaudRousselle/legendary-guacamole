@@ -1,4 +1,3 @@
-using System.Reflection.Emit;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Extensions;
 using LegendaryGuacamole.WebApi.Services;
@@ -8,7 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => (type.Namespace?.Split(".")?.LastOrDefault() ?? "") + type.Name);
+});
 
 builder.Services.AddCors(o =>
     o.AddPolicy("CorsPolicy", builder =>
@@ -43,6 +45,7 @@ AppDomain.CurrentDomain
     .ForEach(queryType =>
     {
         var genericArguments = queryType.BaseType!.GetGenericArguments();
+        var name = (queryType.Namespace?.Split(".")?.LastOrDefault() ?? "") + queryType.Name;
 
         if (genericArguments.Length == 1)
         {
@@ -50,7 +53,7 @@ AppDomain.CurrentDomain
 
             var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
             mapMethod?.MakeGenericMethod([queryType, outputType])
-                .Invoke(null, [app, queryType.Name, channel]);
+                .Invoke(null, [app, name, channel]);
         }
         else
         {
@@ -59,7 +62,7 @@ AppDomain.CurrentDomain
 
             var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQueryWithInput));
             mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
-                .Invoke(null, [app, queryType.Name, channel]);
+                .Invoke(null, [app, name, channel]);
         }
     });
 

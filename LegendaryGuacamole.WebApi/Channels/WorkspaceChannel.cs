@@ -4,7 +4,7 @@ namespace LegendaryGuacamole.WebApi.Channels;
 
 public class WorkspaceChannel
 {
-    private readonly Channel<object> channel = Channel.CreateUnbounded<object>(
+    private readonly Channel<IWorkspaceQuery> channel = Channel.CreateUnbounded<IWorkspaceQuery>(
         new UnboundedChannelOptions
         {
             SingleReader = true,
@@ -12,29 +12,29 @@ public class WorkspaceChannel
         }
     );
 
-    public ChannelReader<object> Reader { get => channel.Reader; }
+    public ChannelReader<IWorkspaceQuery> Reader { get => channel.Reader; }
 
-    public async Task<TOutput> QueryAsync<TInput, TOutput>(IWorkspaceQuery<TInput, TOutput> query)
+    public async Task<QueryResponce<TOutput>> QueryAsync<TInput, TOutput>(WorkspaceQuery<TInput, TOutput> query)
     {
         await channel.Writer.WriteAsync(query);
-        return await query.TaskResult;
+        return await query.Response;
+    }
+
+    public async Task<QueryResponce<TOutput>> QueryAsync<TOutput>(WorkspaceQuery<TOutput> query)
+    {
+        await channel.Writer.WriteAsync(query);
+        return await query.Response;
     }
 }
 
-public interface IWorkspaceQuery { }
-
-public interface IWorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
+public interface IWorkspaceQuery
 {
-    public TInput Input { get; set; }
-    public Task OnCompleted(TOutput result);
-    public Task<TOutput> TaskResult { get; }
+    public Task OnError();
 }
 
-public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, TOutput> where TInput : new()
+public abstract class WorkspaceQuery<TOutput> : IWorkspaceQuery
 {
-    public TInput Input { get; set; } = new();
-
-    private Channel<TOutput> channel = Channel.CreateUnbounded<TOutput>(
+    private Channel<QueryResponce<TOutput>> channel = Channel.CreateUnbounded<QueryResponce<TOutput>>(
         new UnboundedChannelOptions
         {
             SingleReader = true,
@@ -42,23 +42,53 @@ public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, 
         }
     );
 
-    public async Task OnCompleted(TOutput result)
+    public async Task OnSuccess(TOutput response)
     {
-        await channel.Writer.WriteAsync(result);
+        await channel.Writer.WriteAsync(QueryResponce<TOutput>.Success(response));
         channel.Writer.Complete();
     }
 
-    public Task<TOutput> TaskResult
+    public async Task OnError()
     {
-        get => ReadResult();
+        await channel.Writer.WriteAsync(QueryResponce<TOutput>.Error());
+        channel.Writer.Complete();
     }
 
-    private async Task<TOutput> ReadResult()
+    public Task<QueryResponce<TOutput>> Response
+    {
+        get => ReadResponse();
+    }
+
+    private async Task<QueryResponce<TOutput>> ReadResponse()
     {
         await channel.Reader.WaitToReadAsync();
-        var result = channel.Reader.TryRead(out TOutput? output) ? output : default;
+        var result = channel.Reader.TryRead(out QueryResponce<TOutput>? response) ? response : default;
         if (result == null)
             throw new Exception("error while reading response");
         return result;
     }
+}
+
+public abstract class WorkspaceQuery<TInput, TOutput> : WorkspaceQuery<TOutput>
+{
+    public required TInput Input { get; set; }
+}
+
+public class QueryResponce<T>
+{
+    public T? Result { get; init; }
+    public bool HasError { get; init; }
+
+    private QueryResponce(T result)
+    {
+        Result = result;
+    }
+
+    private QueryResponce()
+    {
+        HasError = true;
+    }
+
+    public static QueryResponce<T> Success(T result) => new(result);
+    public static QueryResponce<T> Error() => new();
 }

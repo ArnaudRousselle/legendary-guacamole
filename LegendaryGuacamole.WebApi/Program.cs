@@ -38,17 +38,29 @@ app.UseHttpsRedirection();
 AppDomain.CurrentDomain
     .GetAssemblies()
     .SelectMany(s => s.GetTypes())
-    .Where(t => t.BaseType != null && t.BaseType.IsAssignableTo(typeof(IWorkspaceQuery)))
+    .Where(t => !t.IsAbstract && t.BaseType != null && t.BaseType.IsAssignableTo(typeof(IWorkspaceQuery)))
     .ToList()
     .ForEach(queryType =>
     {
         var genericArguments = queryType.BaseType!.GetGenericArguments();
-        var inputType = genericArguments[0];
-        var outputType = genericArguments[1];
 
-        var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
-        mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
-            .Invoke(null, [app, queryType.Name, channel]);
+        if (genericArguments.Length == 1)
+        {
+            var outputType = genericArguments[0];
+
+            var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
+            mapMethod?.MakeGenericMethod([queryType, outputType])
+                .Invoke(null, [app, queryType.Name, channel]);
+        }
+        else
+        {
+            var inputType = genericArguments[0];
+            var outputType = genericArguments[1];
+
+            var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQueryWithInput));
+            mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
+                .Invoke(null, [app, queryType.Name, channel]);
+        }
     });
 
 app.Run();

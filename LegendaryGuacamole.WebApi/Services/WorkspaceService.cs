@@ -2,7 +2,7 @@ using LegendaryGuacamole.WebApi.Channels;
 
 namespace LegendaryGuacamole.WebApi.Services;
 
-public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
+public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger) : BackgroundService
 {
     private readonly List<Models.Billing> billings = [];
     private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
@@ -30,27 +30,33 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {
-            while (channel.Reader.TryRead(out object? message))
+            while (channel.Reader.TryRead(out IWorkspaceQuery? message))
             {
                 if (message == null)
                     continue;
 
-                //todo ARNAUD: voir pour gérer les exceptions
-
-                switch (message)
+                try
                 {
-                    case AddBilling m:
-                        await HandleAsync(m);
-                        break;
-                    case DeleteBilling m:
-                        await HandleAsync(m);
-                        break;
-                    case EditBilling m:
-                        await HandleAsync(m);
-                        break;
-                    case ListBillings m:
-                        await HandleAsync(m);
-                        break;
+                    switch (message)
+                    {
+                        case AddBilling m:
+                            await HandleAsync(m);
+                            break;
+                        case DeleteBilling m:
+                            await HandleAsync(m);
+                            break;
+                        case EditBilling m:
+                            await HandleAsync(m);
+                            break;
+                        case ListBillings m:
+                            await HandleAsync(m);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.ToString());
+                    await message.OnError();
                 }
             }
         }
@@ -71,7 +77,7 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
             ValuationDate = m.Input.ValuationDate.ToDateOnly()
         });
 
-        await m.OnCompleted(newId);
+        await m.OnSuccess(newId);
     }
 
     private async Task HandleAsync(DeleteBilling m)
@@ -79,11 +85,14 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
         var billing = billings.SingleOrDefault(b => b.Id == m.Input);
 
         if (billing == null)
+        {
+            await m.OnSuccess(false);
             return;
+        }
 
         billings.Remove(billing);
 
-        await m.OnCompleted(new());
+        await m.OnSuccess(true);
     }
 
     private async Task HandleAsync(EditBilling m)
@@ -91,7 +100,10 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
         var billing = billings.SingleOrDefault(b => b.Id == m.Input.Id);
 
         if (billing == null)
+        {
+            await m.OnSuccess(false);
             return;
+        }
 
         billing.Amount = m.Input.Amount;
         billing.Checked = m.Input.Checked;
@@ -101,12 +113,12 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
         billing.Title = m.Input.Title;
         billing.ValuationDate = m.Input.ValuationDate.ToDateOnly();
 
-        await m.OnCompleted(new());
+        await m.OnSuccess(true);
     }
 
     private async Task HandleAsync(ListBillings m)
     {
-        await m.OnCompleted(billings
+        await m.OnSuccess(billings
             .Select(b => new Dtos.Billing
             {
                 Id = b.Id,

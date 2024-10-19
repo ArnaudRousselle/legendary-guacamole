@@ -1,5 +1,6 @@
 using System.Reflection.Emit;
 using LegendaryGuacamole.WebApi.Channels;
+using LegendaryGuacamole.WebApi.Extensions;
 using LegendaryGuacamole.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,24 +40,15 @@ AppDomain.CurrentDomain
     .SelectMany(s => s.GetTypes())
     .Where(t => t.BaseType != null && t.BaseType.IsAssignableTo(typeof(IWorkspaceQuery)))
     .ToList()
-    .ForEach(t =>
+    .ForEach(queryType =>
     {
-        var genericArguments = t.BaseType!.GetGenericArguments();
+        var genericArguments = queryType.BaseType!.GetGenericArguments();
         var inputType = genericArguments[0];
         var outputType = genericArguments[1];
 
-        DynamicMethod method = new DynamicMethod(
-            t.Name,
-            outputType,
-            [inputType],
-            typeof(Program).Module);
-
-        app.MapPost($"/{t.Name[..1].ToLower()}{t.Name[1..]}", async () =>
-        {
-            await Task.CompletedTask;
-        })
-        .WithName(t.Name)
-        .WithOpenApi();
+        var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
+        mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
+            .Invoke(null, [app, queryType.Name, channel]);
     });
 
 app.Run();

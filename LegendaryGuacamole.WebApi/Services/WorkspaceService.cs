@@ -30,10 +30,12 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {
-            while (channel.Reader.TryRead(out IWorkspaceQuery? message))
+            while (channel.Reader.TryRead(out object? message))
             {
                 if (message == null)
                     continue;
+
+                //todo ARNAUD: voir pour gérer les exceptions
 
                 switch (message)
                 {
@@ -56,9 +58,10 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
 
     private async Task HandleAsync(AddBilling m)
     {
+        var newId = Guid.NewGuid();
         billings.Add(new()
         {
-            Id = Guid.NewGuid(),
+            Id = newId,
             Amount = m.Input.Amount,
             Checked = m.Input.Checked,
             Comment = m.Input.Comment,
@@ -68,7 +71,7 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
             ValuationDate = m.Input.ValuationDate.ToDateOnly()
         });
 
-        await m.OnCompleted(new());
+        await m.OnCompleted(newId);
     }
 
     private async Task HandleAsync(DeleteBilling m)
@@ -104,15 +107,22 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
     private async Task HandleAsync(ListBillings m)
     {
         await m.OnCompleted(billings
-            .Select(b => new Dtos.Billing(
-                b.Id,
-                new(b.ValuationDate.Year, b.ValuationDate.Month, b.ValuationDate.Day),
-                b.Title,
-                b.Amount,
-                b.Checked,
-                b.Comment,
-                b.IsArchived,
-                b.IsSaving))
+            .Select(b => new Dtos.Billing
+            {
+                Id = b.Id,
+                ValuationDate = new()
+                {
+                    Year = b.ValuationDate.Year,
+                    Month = b.ValuationDate.Month,
+                    Day = b.ValuationDate.Day
+                },
+                Title = b.Title,
+                Amount = b.Amount,
+                Checked = b.Checked,
+                Comment = b.Comment,
+                IsArchived = b.IsArchived,
+                IsSaving = b.IsSaving
+            })
             .ToArray());
     }
 }

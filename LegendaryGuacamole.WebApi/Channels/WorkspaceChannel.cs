@@ -4,7 +4,7 @@ namespace LegendaryGuacamole.WebApi.Channels;
 
 public class WorkspaceChannel
 {
-    private readonly Channel<IWorkspaceQuery> channel = Channel.CreateUnbounded<IWorkspaceQuery>(
+    private readonly Channel<object> channel = Channel.CreateUnbounded<object>(
         new UnboundedChannelOptions
         {
             SingleReader = true,
@@ -12,27 +12,27 @@ public class WorkspaceChannel
         }
     );
 
-    public ChannelReader<IWorkspaceQuery> Reader { get => channel.Reader; }
+    public ChannelReader<object> Reader { get => channel.Reader; }
 
-    public async Task QueryAsync<TInput, TOutput>(IWorkspaceQuery<TInput, TOutput> query)
+    public async Task<TOutput> QueryAsync<TInput, TOutput>(IWorkspaceQuery<TInput, TOutput> query)
     {
         await channel.Writer.WriteAsync(query);
+        return await query.TaskResult;
     }
 }
 
-public interface IWorkspaceQuery
-{
-}
+public interface IWorkspaceQuery { }
 
 public interface IWorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
 {
     public TInput Input { get; set; }
     public Task OnCompleted(TOutput result);
+    public Task<TOutput> TaskResult { get; }
 }
 
-public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, TOutput>
+public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, TOutput> where TInput : new()
 {
-    public required TInput Input { get; set; }
+    public TInput Input { get; set; } = new();
 
     private Channel<TOutput> channel = Channel.CreateUnbounded<TOutput>(
         new UnboundedChannelOptions
@@ -48,14 +48,17 @@ public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery<TInput, 
         channel.Writer.Complete();
     }
 
-    public Task<TOutput?> Result
+    public Task<TOutput> TaskResult
     {
         get => ReadResult();
     }
 
-    private async Task<TOutput?> ReadResult()
+    private async Task<TOutput> ReadResult()
     {
         await channel.Reader.WaitToReadAsync();
-        return channel.Reader.TryRead(out TOutput? result) ? result : default;
+        var result = channel.Reader.TryRead(out TOutput? output) ? output : default;
+        if (result == null)
+            throw new Exception("error while reading response");
+        return result;
     }
 }

@@ -13,10 +13,8 @@ public static class WebApplicationExtensions
             async () =>
             {
                 TQuery query = new();
-                var response = await channel.QueryAsync(query);
-                return !response.HasError ? Results.Ok(response.Result) : Results.Problem();
+                return await channel.QueryAsync(query);
             })
-            .Produces<TOutput>()
             .WithName(name)
             .WithOpenApi();
     }
@@ -33,9 +31,8 @@ public static class WebApplicationExtensions
                     Input = input
                 };
                 var response = await channel.QueryAsync(query);
-                return !response.HasError ? Results.Ok(response.Result) : Results.Problem();
+                return await channel.QueryAsync(query);
             })
-            .Produces<TOutput>()
             .WithName(name)
             .WithOpenApi();
     }

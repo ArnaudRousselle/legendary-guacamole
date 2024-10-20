@@ -2,10 +2,16 @@ using LegendaryGuacamole.WebApi.Channels;
 
 namespace LegendaryGuacamole.WebApi.Services;
 
-public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger) : BackgroundService
+public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
+    : BackgroundService, AddBilling.Query.IQueryHandler
 {
     private readonly List<Models.Billing> billings = [];
     private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
+
+    public Guid Handle(AddBilling.Input input)
+    {
+        throw new NotImplementedException();
+    }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -35,11 +41,17 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 if (message == null)
                     continue;
 
+                if (message.GetHandlerType().IsAssignableTo(GetType()))
+                {
+                    //todo ARNAUD: à continuer
+                }
+
                 try
                 {
                     switch (message)
                     {
                         case AddBilling.Query m:
+                            var test = Handle(m.Input);
                             await HandleAsync(m);
                             break;
                         case DeleteBilling.Query m:

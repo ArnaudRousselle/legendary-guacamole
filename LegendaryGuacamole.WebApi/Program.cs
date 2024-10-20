@@ -47,23 +47,12 @@ AppDomain.CurrentDomain
         var genericArguments = queryType.BaseType!.GetGenericArguments();
         var name = (queryType.Namespace?.Split(".")?.LastOrDefault() ?? "") + queryType.Name;
 
-        if (genericArguments.Length == 1)
-        {
-            var outputType = genericArguments[0];
+        var inputType = genericArguments[0];
+        var outputType = genericArguments[1];
 
-            var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
-            mapMethod?.MakeGenericMethod([queryType, outputType])
-                .Invoke(null, [app, name, channel]);
-        }
-        else
-        {
-            var inputType = genericArguments[0];
-            var outputType = genericArguments[1];
-
-            var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQueryWithInput));
-            mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
-                .Invoke(null, [app, name, channel]);
-        }
+        var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
+        mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
+            .Invoke(null, [app, name, channel]);
     });
 
 app.Run();

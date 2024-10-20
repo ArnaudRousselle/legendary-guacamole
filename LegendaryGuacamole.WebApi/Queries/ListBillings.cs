@@ -4,7 +4,12 @@ using LegendaryGuacamole.WebApi.Dtos;
 
 namespace LegendaryGuacamole.WebApi.ListBillings;
 
-public class Query : WorkspaceQuery<Output[]> { }
+public class Query : WorkspaceQuery<Input, Output[]> { }
+
+public class Input
+{
+    public string? Title { get; set; }
+}
 
 public class Output
 {

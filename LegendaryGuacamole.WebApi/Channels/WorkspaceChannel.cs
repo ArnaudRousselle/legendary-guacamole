@@ -23,27 +23,18 @@ public class WorkspaceChannel
 
 public interface IWorkspaceQuery
 {
-    public object? Input { get; }
     public Task OnSuccess(object response);
     public Task OnError();
-    public Type GetHandlerType();
 }
 
 public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
 {
-    public interface IQueryHandler
+    public interface IHandler
     {
         public TOutput Handle(TInput input);
     }
 
-    public Type GetHandlerType()
-    {
-        return typeof(IQueryHandler);
-    }
-
     public required TInput Input { get; set; }
-
-    object? IWorkspaceQuery.Input { get => Input; }
 
     private Channel<TOutput?> channel = Channel.CreateUnbounded<TOutput?>(
         new UnboundedChannelOptions

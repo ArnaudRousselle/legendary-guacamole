@@ -4,7 +4,7 @@ using LegendaryGuacamole.WebApi.Dtos;
 
 namespace LegendaryGuacamole.WebApi.EditBilling;
 
-public class Query : WorkspaceQuery<Input, bool> { }
+public class Query : WorkspaceQuery<Input, Output> { }
 
 public class Input
 {
@@ -23,4 +23,10 @@ public class Input
     public bool IsArchived { get; set; }
     [Required]
     public bool IsSaving { get; set; }
+}
+
+public class Output
+{
+    [Required]
+    public required bool HasBeenEdited { get; init; }
 }

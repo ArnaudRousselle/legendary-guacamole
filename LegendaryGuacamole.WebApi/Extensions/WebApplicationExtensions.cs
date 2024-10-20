@@ -5,32 +5,16 @@ namespace LegendaryGuacamole.WebApi.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void MapQuery<TQuery, TOutput>(this WebApplication app, string name, WorkspaceChannel channel) where TQuery : WorkspaceQuery<TOutput>, new()
+    public static void MapQuery<TQuery, TInput, TOutput>(this WebApplication app, string name, WorkspaceChannel channel) where TQuery : WorkspaceQuery<TInput, TOutput>, new() where TInput : new()
     {
-        var routeName = $"/{name[..1].ToLower()}{name[1..]}";
-
-        app.MapPost(routeName,
-            async () =>
-            {
-                TQuery query = new();
-                return await channel.QueryAsync(query);
-            })
-            .WithName(name)
-            .WithOpenApi();
-    }
-
-    public static void MapQueryWithInput<TQuery, TInput, TOutput>(this WebApplication app, string name, WorkspaceChannel channel) where TQuery : WorkspaceQuery<TInput, TOutput>, new() where TInput : new()
-    {
-        var routeName = $"/{name[..1].ToLower()}{name[1..]}";
-
-        app.MapPost(routeName,
+        app.MapPost($"/{name[..1].ToLower()}{name[1..]}",
             async (TInput input) =>
             {
                 TQuery query = new()
                 {
                     Input = input
                 };
-                var response = await channel.QueryAsync(query);
+                //todo ARNAUD: tester si exception (programme se ferme ???)
                 return await channel.QueryAsync(query);
             })
             .WithName(name)

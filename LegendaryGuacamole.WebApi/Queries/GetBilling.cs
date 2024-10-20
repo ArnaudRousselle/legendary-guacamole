@@ -4,7 +4,13 @@ using LegendaryGuacamole.WebApi.Dtos;
 
 namespace LegendaryGuacamole.WebApi.GetBilling;
 
-public class Query : WorkspaceQuery<Guid, Output> { }
+public class Query : WorkspaceQuery<Input, Output> { }
+
+public class Input
+{
+    [Required]
+    public Guid Id { get; init; }
+}
 
 public class Output
 {

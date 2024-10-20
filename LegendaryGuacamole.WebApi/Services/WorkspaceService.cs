@@ -3,15 +3,15 @@ using LegendaryGuacamole.WebApi.Channels;
 namespace LegendaryGuacamole.WebApi.Services;
 
 public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
-    : BackgroundService, AddBilling.Query.IQueryHandler
+    : BackgroundService,
+    AddBilling.Query.IHandler,
+    DeleteBilling.Query.IHandler,
+    EditBilling.Query.IHandler,
+    GetBilling.Query.IHandler,
+    ListBillings.Query.IHandler
 {
     private readonly List<Models.Billing> billings = [];
     private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
-
-    public Guid Handle(AddBilling.Input input)
-    {
-        throw new NotImplementedException();
-    }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -41,36 +41,10 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 if (message == null)
                     continue;
 
-                if (message.GetHandlerType().IsAssignableTo(GetType()))
-                {
-                    //todo ARNAUD: à continuer
-                }
-
                 try
                 {
-                    switch (message)
-                    {
-                        case AddBilling.Query m:
-                            var test = Handle(m.Input);
-                            await HandleAsync(m);
-                            break;
-                        case DeleteBilling.Query m:
-                            await HandleAsync(m);
-                            break;
-                        case EditBilling.Query m:
-                            await HandleAsync(m);
-                            break;
-                        case GetBilling.Query m:
-                            await HandleAsync(m);
-                            break;
-                        case ListBillings.Query m:
-                            await HandleAsync(m);
-                            break;
-                        default:
-                            logger.LogWarning($"{message.GetType().Name} not implemented");
-                            await message.OnError();
-                            break;
-                    }
+                    object output = ((dynamic)this).Handle(((dynamic)message).Input);
+                    await message.OnSuccess(output);
                 }
                 catch (Exception ex)
                 {
@@ -81,64 +55,61 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         }
     }
 
-    private async Task HandleAsync(AddBilling.Query m)
+    public AddBilling.Output Handle(AddBilling.Input input)
     {
         var newId = Guid.NewGuid();
         billings.Add(new()
         {
             Id = newId,
-            Amount = m.Input.Amount,
-            Checked = m.Input.Checked,
-            Comment = m.Input.Comment,
-            IsArchived = m.Input.IsArchived,
-            IsSaving = m.Input.IsSaving,
-            Title = m.Input.Title,
-            ValuationDate = m.Input.ValuationDate.ToDateOnly()
+            Amount = input.Amount,
+            Checked = input.Checked,
+            Comment = input.Comment,
+            IsArchived = input.IsArchived,
+            IsSaving = input.IsSaving,
+            Title = input.Title,
+            ValuationDate = input.ValuationDate.ToDateOnly()
         });
 
-        await m.OnSuccess(newId);
+        return new()
+        {
+            NewId = newId
+        };
     }
 
-    private async Task HandleAsync(DeleteBilling.Query m)
+    public DeleteBilling.Output Handle(DeleteBilling.Input input)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == m.Input);
+        var billing = billings.SingleOrDefault(b => b.Id == input.Id);
 
         if (billing == null)
-        {
-            await m.OnSuccess(false);
-            return;
-        }
+            return new() { HasBeenDeleted = false };
 
         billings.Remove(billing);
 
-        await m.OnSuccess(true);
+        return new() { HasBeenDeleted = false };
     }
 
-    private async Task HandleAsync(EditBilling.Query m)
+    public EditBilling.Output Handle(EditBilling.Input input)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == m.Input.Id);
+        var billing = billings.SingleOrDefault(b => b.Id == input.Id);
 
         if (billing == null)
-        {
-            await m.OnSuccess(false);
-            return;
-        }
+            return new() { HasBeenEdited = false };
 
-        billing.Amount = m.Input.Amount;
-        billing.Checked = m.Input.Checked;
-        billing.Comment = m.Input.Comment;
-        billing.IsArchived = m.Input.IsArchived;
-        billing.IsSaving = m.Input.IsSaving;
-        billing.Title = m.Input.Title;
-        billing.ValuationDate = m.Input.ValuationDate.ToDateOnly();
+        billing.Amount = input.Amount;
+        billing.Checked = input.Checked;
+        billing.Comment = input.Comment;
+        billing.IsArchived = input.IsArchived;
+        billing.IsSaving = input.IsSaving;
+        billing.Title = input.Title;
+        billing.ValuationDate = input.ValuationDate.ToDateOnly();
 
-        await m.OnSuccess(true);
+        return new() { HasBeenEdited = true };
     }
 
-    private async Task HandleAsync(GetBilling.Query m)
+    public GetBilling.Output Handle(GetBilling.Input input)
     {
-        var b = billings.Single(b => b.Id == m.Input);
-        await m.OnSuccess(new()
+        var b = billings.Single(b => b.Id == input.Id);
+        return new()
         {
             Id = b.Id,
             ValuationDate = new()
@@ -153,12 +124,12 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             Comment = b.Comment,
             IsArchived = b.IsArchived,
             IsSaving = b.IsSaving
-        });
+        };
     }
 
-    private async Task HandleAsync(ListBillings.Query m)
+    public ListBillings.Output[] Handle(ListBillings.Input input)
     {
-        await m.OnSuccess(billings
+        return billings
             .Select(b => new ListBillings.Output
             {
                 Id = b.Id,
@@ -175,6 +146,8 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 IsArchived = b.IsArchived,
                 IsSaving = b.IsSaving
             })
-            .ToArray());
+            .ToArray();
     }
+
+
 }

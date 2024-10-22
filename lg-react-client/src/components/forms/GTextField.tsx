@@ -30,8 +30,8 @@ export const GTextField = <TFieldValues extends FieldValues = FieldValues>({
 
   return (
     <>
-      {label}
       <TextField
+        label={label}
         type="text"
         value={field.value ?? ""}
         onChange={(evt) => field.onChange(evt.target.value)}

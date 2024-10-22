@@ -18,9 +18,14 @@ type FormData = {
 
 export const TestArnaud = () => {
   const { legendaryGuacamoleWebApiApi } = useApi();
-  const { data, isFetching, isSuccess } = useQuery({
+  const {
+    data = [],
+    isFetching,
+    isSuccess,
+  } = useQuery({
     queryKey: ["testArnaud"],
-    queryFn: async () => await legendaryGuacamoleWebApiApi.getWeatherForecast(),
+    queryFn: async () =>
+      await legendaryGuacamoleWebApiApi.listBillingsQuery({}),
   });
 
   const { control, handleSubmit } = useForm<FormData>({
@@ -37,7 +42,7 @@ export const TestArnaud = () => {
   return (
     <>
       {data.map((d, i) => (
-        <div key={i}>{d.summary}</div>
+        <div key={i}>{d.title}</div>
       ))}
       <Box>
         <GTextField control={control} name="name" rules={{ required: true }} />

@@ -15,12 +15,59 @@
 
 import * as runtime from '../runtime';
 import type {
-  WeatherForecast,
+  AddBillingInput,
+  AddBillingOutput,
+  DeleteBillingInput,
+  DeleteBillingOutput,
+  EditBillingInput,
+  EditBillingOutput,
+  GetBillingInput,
+  GetBillingOutput,
+  ListBillingsInput,
+  ListBillingsOutput,
 } from '../models/index';
 import {
-    WeatherForecastFromJSON,
-    WeatherForecastToJSON,
+    AddBillingInputFromJSON,
+    AddBillingInputToJSON,
+    AddBillingOutputFromJSON,
+    AddBillingOutputToJSON,
+    DeleteBillingInputFromJSON,
+    DeleteBillingInputToJSON,
+    DeleteBillingOutputFromJSON,
+    DeleteBillingOutputToJSON,
+    EditBillingInputFromJSON,
+    EditBillingInputToJSON,
+    EditBillingOutputFromJSON,
+    EditBillingOutputToJSON,
+    GetBillingInputFromJSON,
+    GetBillingInputToJSON,
+    GetBillingOutputFromJSON,
+    GetBillingOutputToJSON,
+    ListBillingsInputFromJSON,
+    ListBillingsInputToJSON,
+    ListBillingsOutputFromJSON,
+    ListBillingsOutputToJSON,
 } from '../models/index';
+
+export interface AddBillingQueryRequest {
+    addBillingInput?: AddBillingInput;
+}
+
+export interface DeleteBillingQueryRequest {
+    deleteBillingInput?: DeleteBillingInput;
+}
+
+export interface EditBillingQueryRequest {
+    editBillingInput?: EditBillingInput;
+}
+
+export interface GetBillingQueryRequest {
+    getBillingInput?: GetBillingInput;
+}
+
+export interface ListBillingsQueryRequest {
+    listBillingsInput?: ListBillingsInput;
+}
 
 /**
  * 
@@ -29,25 +76,136 @@ export class LegendaryGuacamoleWebApiApi extends runtime.BaseAPI {
 
     /**
      */
-    async getWeatherForecastRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<WeatherForecast>>> {
+    async addBillingQueryRaw(requestParameters: AddBillingQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AddBillingOutput>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
+        headerParameters['Content-Type'] = 'application/json';
+
         const response = await this.request({
-            path: `/weatherforecast`,
-            method: 'GET',
+            path: `/addBillingQuery`,
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: AddBillingInputToJSON(requestParameters['addBillingInput']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(WeatherForecastFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => AddBillingOutputFromJSON(jsonValue));
     }
 
     /**
      */
-    async getWeatherForecast(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<WeatherForecast>> {
-        const response = await this.getWeatherForecastRaw(initOverrides);
+    async addBillingQuery(addBillingInput?: AddBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AddBillingOutput> {
+        const response = await this.addBillingQueryRaw({ addBillingInput: addBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async deleteBillingQueryRaw(requestParameters: DeleteBillingQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteBillingOutput>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/deleteBillingQuery`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: DeleteBillingInputToJSON(requestParameters['deleteBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DeleteBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async deleteBillingQuery(deleteBillingInput?: DeleteBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteBillingOutput> {
+        const response = await this.deleteBillingQueryRaw({ deleteBillingInput: deleteBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async editBillingQueryRaw(requestParameters: EditBillingQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<EditBillingOutput>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/editBillingQuery`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditBillingInputToJSON(requestParameters['editBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EditBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async editBillingQuery(editBillingInput?: EditBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EditBillingOutput> {
+        const response = await this.editBillingQueryRaw({ editBillingInput: editBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getBillingQueryRaw(requestParameters: GetBillingQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetBillingOutput>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/getBillingQuery`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GetBillingInputToJSON(requestParameters['getBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getBillingQuery(getBillingInput?: GetBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetBillingOutput> {
+        const response = await this.getBillingQueryRaw({ getBillingInput: getBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async listBillingsQueryRaw(requestParameters: ListBillingsQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ListBillingsOutput>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/listBillingsQuery`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ListBillingsInputToJSON(requestParameters['listBillingsInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ListBillingsOutputFromJSON));
+    }
+
+    /**
+     */
+    async listBillingsQuery(listBillingsInput?: ListBillingsInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ListBillingsOutput>> {
+        const response = await this.listBillingsQueryRaw({ listBillingsInput: listBillingsInput }, initOverrides);
         return await response.value();
     }
 

@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "gen": "SET JAVA_OPTS=-Dio.swagger.parser.util.RemoteUrl.trustAll=true -Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true && rmdir .\\src\\api\\ /Q /S && openapi-generator-cli generate -i http://localhost:5152/swagger/v1/swagger.json -g typescript-fetch -o src/api/ -c api.json && node ./scripts/gen-api-context.js"
+    "gen": "SET JAVA_OPTS=-Dio.swagger.parser.util.RemoteUrl.trustAll=true -Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true && openapi-generator-cli generate -i http://localhost:5152/swagger/v1/swagger.json -g typescript-fetch -o src/api/ -c api.json && node ./scripts/clean-api.js && node ./scripts/gen-api-context.js"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

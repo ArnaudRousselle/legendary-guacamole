@@ -14,24 +14,29 @@ public class WorkspaceChannel
 
     public ChannelReader<IWorkspaceQuery> Reader { get => channel.Reader; }
 
-    public async Task QueryAsync<T>(IWorkspaceQuery<T> query)
+    public async Task<TOutput> QueryAsync<TInput, TOutput>(WorkspaceQuery<TInput, TOutput> query)
     {
         await channel.Writer.WriteAsync(query);
+        return await query.Response;
     }
 }
 
 public interface IWorkspaceQuery
 {
+    public Task OnSuccess(object response);
+    public Task OnError();
 }
 
-public interface IWorkspaceQuery<T> : IWorkspaceQuery
+public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
 {
-    public Task OnCompleted(T result);
-}
+    public interface IHandler
+    {
+        public TOutput Handle(TInput input);
+    }
 
-public abstract class WorkspaceQuery : IWorkspaceQuery<bool>
-{
-    private Channel<bool> channel = Channel.CreateUnbounded<bool>(
+    public required TInput Input { get; set; }
+
+    private Channel<TOutput?> channel = Channel.CreateUnbounded<TOutput?>(
         new UnboundedChannelOptions
         {
             SingleReader = true,
@@ -39,48 +44,28 @@ public abstract class WorkspaceQuery : IWorkspaceQuery<bool>
         }
     );
 
-    public async Task OnCompleted(bool _)
+    public async Task OnSuccess(object response)
     {
-        await channel.Writer.WriteAsync(true);
+        await channel.Writer.WriteAsync((TOutput)response);
         channel.Writer.Complete();
     }
 
-    public Task Result
+    public async Task OnError()
     {
-        get => ReadResult();
-    }
-
-    private async Task ReadResult()
-    {
-        await channel.Reader.WaitToReadAsync();
-        channel.Reader.TryRead(out _);
-    }
-}
-
-public abstract class WorkspaceQuery<T> : IWorkspaceQuery<T>
-{
-    private Channel<T> channel = Channel.CreateUnbounded<T>(
-        new UnboundedChannelOptions
-        {
-            SingleReader = true,
-            SingleWriter = false
-        }
-    );
-
-    public async Task OnCompleted(T result)
-    {
-        await channel.Writer.WriteAsync(result);
+        await channel.Writer.WriteAsync(default);
         channel.Writer.Complete();
     }
 
-    public Task<T?> Result
+    public Task<TOutput> Response
     {
-        get => ReadResult();
+        get => ReadResponse();
     }
 
-    private async Task<T?> ReadResult()
+    private async Task<TOutput> ReadResponse()
     {
         await channel.Reader.WaitToReadAsync();
-        return channel.Reader.TryRead(out T? result) ? result : default;
+        return (channel.Reader.TryRead(out TOutput? response) ? response : default)
+            ?? throw new Exception("internal error");
     }
 }
+

@@ -2,7 +2,13 @@ using LegendaryGuacamole.WebApi.Channels;
 
 namespace LegendaryGuacamole.WebApi.Services;
 
-public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
+public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
+    : BackgroundService,
+    AddBilling.Query.IHandler,
+    DeleteBilling.Query.IHandler,
+    EditBilling.Query.IHandler,
+    GetBilling.Query.IHandler,
+    ListBillings.Query.IHandler
 {
     private readonly List<Models.Billing> billings = [];
     private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
@@ -35,84 +41,113 @@ public class WorkspaceService(WorkspaceChannel channel) : BackgroundService
                 if (message == null)
                     continue;
 
-                switch (message)
+                try
                 {
-                    case AddBilling m:
-                        await HandleAsync(m);
-                        break;
-                    case DeleteBilling m:
-                        await HandleAsync(m);
-                        break;
-                    case EditBilling m:
-                        await HandleAsync(m);
-                        break;
-                    case ListBillings m:
-                        await HandleAsync(m);
-                        break;
+                    object output = ((dynamic)this).Handle(((dynamic)message).Input);
+                    await message.OnSuccess(output);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.ToString());
+                    await message.OnError();
                 }
             }
         }
     }
 
-    private async Task HandleAsync(AddBilling m)
+    public AddBilling.Output Handle(AddBilling.Input input)
     {
+        var newId = Guid.NewGuid();
         billings.Add(new()
         {
-            Id = Guid.NewGuid(),
-            Amount = m.Billing.Amount,
-            Checked = m.Billing.Checked,
-            Comment = m.Billing.Comment,
-            IsArchived = m.Billing.IsArchived,
-            IsSaving = m.Billing.IsSaving,
-            Title = m.Billing.Title,
-            ValuationDate = m.Billing.ValuationDate.ToDateOnly()
+            Id = newId,
+            Amount = input.Amount,
+            Checked = input.Checked,
+            Comment = input.Comment,
+            IsArchived = input.IsArchived,
+            IsSaving = input.IsSaving,
+            Title = input.Title,
+            ValuationDate = input.ValuationDate.ToDateOnly()
         });
 
-        await m.OnCompleted(true);
+        return new()
+        {
+            NewId = newId
+        };
     }
 
-    private async Task HandleAsync(DeleteBilling m)
+    public DeleteBilling.Output Handle(DeleteBilling.Input input)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == m.BillingId);
+        var billing = billings.SingleOrDefault(b => b.Id == input.Id);
 
         if (billing == null)
-            return;
+            return new() { HasBeenDeleted = false };
 
         billings.Remove(billing);
 
-        await m.OnCompleted(true);
+        return new() { HasBeenDeleted = false };
     }
 
-    private async Task HandleAsync(EditBilling m)
+    public EditBilling.Output Handle(EditBilling.Input input)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == m.Billing.Id);
+        var billing = billings.SingleOrDefault(b => b.Id == input.Id);
 
         if (billing == null)
-            return;
+            return new() { HasBeenEdited = false };
 
-        billing.Amount = m.Billing.Amount;
-        billing.Checked = m.Billing.Checked;
-        billing.Comment = m.Billing.Comment;
-        billing.IsArchived = m.Billing.IsArchived;
-        billing.IsSaving = m.Billing.IsSaving;
-        billing.Title = m.Billing.Title;
-        billing.ValuationDate = m.Billing.ValuationDate.ToDateOnly();
+        billing.Amount = input.Amount;
+        billing.Checked = input.Checked;
+        billing.Comment = input.Comment;
+        billing.IsArchived = input.IsArchived;
+        billing.IsSaving = input.IsSaving;
+        billing.Title = input.Title;
+        billing.ValuationDate = input.ValuationDate.ToDateOnly();
 
-        await m.OnCompleted(true);
+        return new() { HasBeenEdited = true };
     }
 
-    private async Task HandleAsync(ListBillings m)
+    public GetBilling.Output Handle(GetBilling.Input input)
     {
-        await m.OnCompleted(billings
-            .Select(b => new Dtos.Billing(
-                b.Id,
-                new(b.ValuationDate.Year, b.ValuationDate.Month, b.ValuationDate.Day),
-                b.Title,
-                b.Amount,
-                b.Checked,
-                b.Comment,
-                b.IsArchived,
-                b.IsSaving))
-            .ToArray());
+        var b = billings.Single(b => b.Id == input.Id);
+        return new()
+        {
+            Id = b.Id,
+            ValuationDate = new()
+            {
+                Year = b.ValuationDate.Year,
+                Month = b.ValuationDate.Month,
+                Day = b.ValuationDate.Day
+            },
+            Title = b.Title,
+            Amount = b.Amount,
+            Checked = b.Checked,
+            Comment = b.Comment,
+            IsArchived = b.IsArchived,
+            IsSaving = b.IsSaving
+        };
     }
+
+    public ListBillings.Output[] Handle(ListBillings.Input input)
+    {
+        return billings
+            .Select(b => new ListBillings.Output
+            {
+                Id = b.Id,
+                ValuationDate = new()
+                {
+                    Year = b.ValuationDate.Year,
+                    Month = b.ValuationDate.Month,
+                    Day = b.ValuationDate.Day
+                },
+                Title = b.Title,
+                Amount = b.Amount,
+                Checked = b.Checked,
+                Comment = b.Comment,
+                IsArchived = b.IsArchived,
+                IsSaving = b.IsSaving
+            })
+            .ToArray();
+    }
+
+
 }

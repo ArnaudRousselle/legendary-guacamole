@@ -65,7 +65,7 @@ public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
     {
         await channel.Reader.WaitToReadAsync();
         return (channel.Reader.TryRead(out TOutput? response) ? response : default)
-            ?? throw new Exception("error while reading response");
+            ?? throw new Exception("internal error");
     }
 }
 

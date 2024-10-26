@@ -10,7 +10,7 @@ const OUTPUT_FILE = "./src/contexts/apiUtils.ts";
 
 const classNames = globSync(APIS_PATH)
   .map((path) => {
-    const args = path.split("/");
+    const args = path.replaceAll("\\", "/").split("/");
     const fileName = args[args.length - 1];
     const className = fileName.substring(0, fileName.indexOf("."));
     return className;

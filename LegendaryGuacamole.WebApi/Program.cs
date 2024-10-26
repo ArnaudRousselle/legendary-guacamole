@@ -40,18 +40,25 @@ app.UseHttpsRedirection();
 AppDomain.CurrentDomain
     .GetAssemblies()
     .SelectMany(s => s.GetTypes())
-    .Where(t => !t.IsAbstract && t.BaseType != null && t.BaseType.IsAssignableTo(typeof(IWorkspaceQuery)))
+    .Where(t => !t.IsAbstract
+        && t.BaseType != null
+        && t.BaseType.IsAssignableTo(typeof(IWorkspaceQuery)))
     .ToList()
     .ForEach(queryType =>
     {
         var genericArguments = queryType.BaseType!.GetGenericArguments();
+
+        if (genericArguments.Length == 2)
+            genericArguments = queryType.BaseType!.BaseType!.GetGenericArguments();
+
         var name = (queryType.Namespace?.Split(".")?.LastOrDefault() ?? "") + queryType.Name;
 
         var inputType = genericArguments[0];
         var outputType = genericArguments[1];
+        var resultType = genericArguments[2];
 
         var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
-        mapMethod?.MakeGenericMethod([queryType, inputType, outputType])
+        mapMethod?.MakeGenericMethod([queryType, inputType, outputType, resultType])
             .Invoke(null, [app, name, channel]);
     });
 

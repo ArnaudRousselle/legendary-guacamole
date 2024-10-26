@@ -14,7 +14,7 @@ public class WorkspaceChannel
 
     public ChannelReader<IWorkspaceQuery> Reader { get => channel.Reader; }
 
-    public async Task<TOutput> QueryAsync<TInput, TOutput>(WorkspaceQuery<TInput, TOutput> query)
+    public async Task<TResult> QueryAsync<TInput, TOutput, TResult>(WorkspaceQuery<TInput, TOutput, TResult> query)
     {
         await channel.Writer.WriteAsync(query);
         return await query.Response;
@@ -27,13 +27,8 @@ public interface IWorkspaceQuery
     public Task OnError();
 }
 
-public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
+public abstract class WorkspaceQuery<TInput, TOutput, TResult> : IWorkspaceQuery
 {
-    public interface IHandler
-    {
-        public TOutput Handle(TInput input);
-    }
-
     public required TInput Input { get; set; }
 
     private Channel<TOutput?> channel = Channel.CreateUnbounded<TOutput?>(
@@ -56,16 +51,24 @@ public abstract class WorkspaceQuery<TInput, TOutput> : IWorkspaceQuery
         channel.Writer.Complete();
     }
 
-    public Task<TOutput> Response
+    public Task<TResult> Response
     {
         get => ReadResponse();
     }
 
-    private async Task<TOutput> ReadResponse()
+    public abstract TResult Map(TOutput output);
+
+    private async Task<TResult> ReadResponse()
     {
         await channel.Reader.WaitToReadAsync();
-        return (channel.Reader.TryRead(out TOutput? response) ? response : default)
+        var output = (channel.Reader.TryRead(out TOutput? response) ? response : default)
             ?? throw new Exception("internal error");
+        return Map(output);
     }
+}
+
+public abstract class WorkspaceQuery<TInput, TResult> : WorkspaceQuery<TInput, TResult, TResult>
+{
+    public override TResult Map(TResult output) => output;
 }
 

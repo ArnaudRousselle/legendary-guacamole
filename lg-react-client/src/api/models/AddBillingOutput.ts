@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
+import type { DtosShortDate } from './DtosShortDate';
+import {
+    DtosShortDateFromJSON,
+    DtosShortDateFromJSONTyped,
+    DtosShortDateToJSON,
+} from './DtosShortDate';
+
 /**
  * 
  * @export
@@ -24,14 +31,62 @@ export interface AddBillingOutput {
      * @type {string}
      * @memberof AddBillingOutput
      */
-    newId: string;
+    id: string;
+    /**
+     * 
+     * @type {DtosShortDate}
+     * @memberof AddBillingOutput
+     */
+    valuationDate: DtosShortDate;
+    /**
+     * 
+     * @type {string}
+     * @memberof AddBillingOutput
+     */
+    title: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AddBillingOutput
+     */
+    amount: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AddBillingOutput
+     */
+    checked: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AddBillingOutput
+     */
+    comment?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AddBillingOutput
+     */
+    isArchived: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AddBillingOutput
+     */
+    isSaving: boolean;
 }
 
 /**
  * Check if a given object implements the AddBillingOutput interface.
  */
 export function instanceOfAddBillingOutput(value: object): value is AddBillingOutput {
-    if (!('newId' in value) || value['newId'] === undefined) return false;
+    if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('valuationDate' in value) || value['valuationDate'] === undefined) return false;
+    if (!('title' in value) || value['title'] === undefined) return false;
+    if (!('amount' in value) || value['amount'] === undefined) return false;
+    if (!('checked' in value) || value['checked'] === undefined) return false;
+    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
+    if (!('isSaving' in value) || value['isSaving'] === undefined) return false;
     return true;
 }
 
@@ -45,7 +100,14 @@ export function AddBillingOutputFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'newId': json['newId'],
+        'id': json['id'],
+        'valuationDate': DtosShortDateFromJSON(json['valuationDate']),
+        'title': json['title'],
+        'amount': json['amount'],
+        'checked': json['checked'],
+        'comment': json['comment'] == null ? undefined : json['comment'],
+        'isArchived': json['isArchived'],
+        'isSaving': json['isSaving'],
     };
 }
 
@@ -55,7 +117,14 @@ export function AddBillingOutputToJSON(value?: AddBillingOutput | null): any {
     }
     return {
         
-        'newId': value['newId'],
+        'id': value['id'],
+        'valuationDate': DtosShortDateToJSON(value['valuationDate']),
+        'title': value['title'],
+        'amount': value['amount'],
+        'checked': value['checked'],
+        'comment': value['comment'],
+        'isArchived': value['isArchived'],
+        'isSaving': value['isSaving'],
     };
 }
 

@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
+import type { DtosShortDate } from './DtosShortDate';
+import {
+    DtosShortDateFromJSON,
+    DtosShortDateFromJSONTyped,
+    DtosShortDateToJSON,
+} from './DtosShortDate';
+
 /**
  * 
  * @export
@@ -21,10 +28,40 @@ import { mapValues } from '../runtime';
 export interface ListBillingsInput {
     /**
      * 
+     * @type {DtosShortDate}
+     * @memberof ListBillingsInput
+     */
+    startDate?: DtosShortDate;
+    /**
+     * 
+     * @type {DtosShortDate}
+     * @memberof ListBillingsInput
+     */
+    endDate?: DtosShortDate;
+    /**
+     * 
+     * @type {number}
+     * @memberof ListBillingsInput
+     */
+    amount?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ListBillingsInput
+     */
+    deltaAmount?: number | null;
+    /**
+     * 
      * @type {string}
      * @memberof ListBillingsInput
      */
     title?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ListBillingsInput
+     */
+    withArchived?: boolean | null;
 }
 
 /**
@@ -44,7 +81,12 @@ export function ListBillingsInputFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
+        'startDate': json['startDate'] == null ? undefined : DtosShortDateFromJSON(json['startDate']),
+        'endDate': json['endDate'] == null ? undefined : DtosShortDateFromJSON(json['endDate']),
+        'amount': json['amount'] == null ? undefined : json['amount'],
+        'deltaAmount': json['deltaAmount'] == null ? undefined : json['deltaAmount'],
         'title': json['title'] == null ? undefined : json['title'],
+        'withArchived': json['withArchived'] == null ? undefined : json['withArchived'],
     };
 }
 
@@ -54,7 +96,12 @@ export function ListBillingsInputToJSON(value?: ListBillingsInput | null): any {
     }
     return {
         
+        'startDate': DtosShortDateToJSON(value['startDate']),
+        'endDate': DtosShortDateToJSON(value['endDate']),
+        'amount': value['amount'],
+        'deltaAmount': value['deltaAmount'],
         'title': value['title'],
+        'withArchived': value['withArchived'],
     };
 }
 

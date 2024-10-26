@@ -1,4 +1,4 @@
-apis/LegendaryGuacamoleWebApiApi.ts
+apis/WorkspaceApi.ts
 apis/index.ts
 index.ts
 models/AddBillingInput.ts
@@ -10,7 +10,10 @@ models/EditBillingInput.ts
 models/EditBillingOutput.ts
 models/GetBillingInput.ts
 models/GetBillingOutput.ts
+models/GetSummaryResult.ts
 models/ListBillingsInput.ts
 models/ListBillingsOutput.ts
+models/SetCheckedInput.ts
+models/SetCheckedOutput.ts
 models/index.ts
 runtime.ts

@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
+import type { DtosShortDate } from './DtosShortDate';
+import {
+    DtosShortDateFromJSON,
+    DtosShortDateFromJSONTyped,
+    DtosShortDateToJSON,
+} from './DtosShortDate';
+
 /**
  * 
  * @export
@@ -21,17 +28,65 @@ import { mapValues } from '../runtime';
 export interface EditBillingOutput {
     /**
      * 
+     * @type {string}
+     * @memberof EditBillingOutput
+     */
+    id: string;
+    /**
+     * 
+     * @type {DtosShortDate}
+     * @memberof EditBillingOutput
+     */
+    valuationDate: DtosShortDate;
+    /**
+     * 
+     * @type {string}
+     * @memberof EditBillingOutput
+     */
+    title: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof EditBillingOutput
+     */
+    amount: number;
+    /**
+     * 
      * @type {boolean}
      * @memberof EditBillingOutput
      */
-    hasBeenEdited: boolean;
+    checked: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof EditBillingOutput
+     */
+    comment?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof EditBillingOutput
+     */
+    isArchived: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof EditBillingOutput
+     */
+    isSaving: boolean;
 }
 
 /**
  * Check if a given object implements the EditBillingOutput interface.
  */
 export function instanceOfEditBillingOutput(value: object): value is EditBillingOutput {
-    if (!('hasBeenEdited' in value) || value['hasBeenEdited'] === undefined) return false;
+    if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('valuationDate' in value) || value['valuationDate'] === undefined) return false;
+    if (!('title' in value) || value['title'] === undefined) return false;
+    if (!('amount' in value) || value['amount'] === undefined) return false;
+    if (!('checked' in value) || value['checked'] === undefined) return false;
+    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
+    if (!('isSaving' in value) || value['isSaving'] === undefined) return false;
     return true;
 }
 
@@ -45,7 +100,14 @@ export function EditBillingOutputFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'hasBeenEdited': json['hasBeenEdited'],
+        'id': json['id'],
+        'valuationDate': DtosShortDateFromJSON(json['valuationDate']),
+        'title': json['title'],
+        'amount': json['amount'],
+        'checked': json['checked'],
+        'comment': json['comment'] == null ? undefined : json['comment'],
+        'isArchived': json['isArchived'],
+        'isSaving': json['isSaving'],
     };
 }
 
@@ -55,7 +117,14 @@ export function EditBillingOutputToJSON(value?: EditBillingOutput | null): any {
     }
     return {
         
-        'hasBeenEdited': value['hasBeenEdited'],
+        'id': value['id'],
+        'valuationDate': DtosShortDateToJSON(value['valuationDate']),
+        'title': value['title'],
+        'amount': value['amount'],
+        'checked': value['checked'],
+        'comment': value['comment'],
+        'isArchived': value['isArchived'],
+        'isSaving': value['isSaving'],
     };
 }
 

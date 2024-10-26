@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { useApi } from "./contexts";
 import { useForm } from "react-hook-form";
 import { GTextField } from "./components/forms/GTextField";
 import { GCheckBoxField } from "./components/forms/GCheckBoxField";
@@ -17,17 +15,6 @@ type FormData = {
 };
 
 export const TestArnaud = () => {
-  const { legendaryGuacamoleWebApiApi } = useApi();
-  const {
-    data = [],
-    isFetching,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["testArnaud"],
-    queryFn: async () =>
-      await legendaryGuacamoleWebApiApi.listBillingsQuery({}),
-  });
-
   const { control, handleSubmit } = useForm<FormData>({
     mode: "onBlur",
     defaultValues: {
@@ -37,13 +24,8 @@ export const TestArnaud = () => {
     },
   });
 
-  if (isFetching) return "loading...";
-  if (!isSuccess) return "error";
   return (
     <>
-      {data.map((d, i) => (
-        <div key={i}>{d.title}</div>
-      ))}
       <Box>
         <GTextField control={control} name="name" rules={{ required: true }} />
         <GCheckBoxField control={control} name="isOk" />

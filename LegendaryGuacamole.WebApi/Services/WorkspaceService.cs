@@ -3,12 +3,7 @@ using LegendaryGuacamole.WebApi.Channels;
 namespace LegendaryGuacamole.WebApi.Services;
 
 public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
-    : BackgroundService,
-    AddBilling.Query.IHandler,
-    DeleteBilling.Query.IHandler,
-    EditBilling.Query.IHandler,
-    GetBilling.Query.IHandler,
-    ListBillings.Query.IHandler
+    : BackgroundService
 {
     private readonly List<Models.Billing> billings = [];
     private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
@@ -25,14 +20,16 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         repetitiveBillings.AddRange(workspace.RepetitiveBillings);
 
         //todo ARNAUD: à supprimer
-        billings.Add(new()
-        {
-            Id = Guid.NewGuid(),
-            Amount = 123,
-            Checked = true,
-            Title = "Mon titre",
-            ValuationDate = new DateOnly(2024, 10, 12)
-        });
+        for (var i = 0; i < 100; i++)
+            billings.Add(new()
+            {
+                Id = Guid.NewGuid(),
+                Amount = i + 1,
+                Checked = true,
+                Title = "Mon titre " + i,
+                Comment = i % 3 == 0 ? "mon commentaire " + i : null,
+                ValuationDate = new DateOnly(2024, 10, 12)
+            });
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {
@@ -43,7 +40,17 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
                 try
                 {
-                    object output = ((dynamic)this).Handle(((dynamic)message).Input);
+                    object output = message switch
+                    {
+                        AddBilling.Query q => Handle(q.Input),
+                        DeleteBilling.Query q => Handle(q.Input),
+                        EditBilling.Query q => Handle(q.Input),
+                        GetBilling.Query q => Handle(q.Input),
+                        GetSummary.Query q => Handle(q.Input),
+                        ListBillings.Query q => Handle(q.Input),
+                        SetChecked.Query q => Handle(q.Input),
+                        _ => throw new NotImplementedException()
+                    };
                     await message.OnSuccess(output);
                 }
                 catch (Exception ex)
@@ -58,7 +65,8 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
     public AddBilling.Output Handle(AddBilling.Input input)
     {
         var newId = Guid.NewGuid();
-        billings.Add(new()
+
+        Models.Billing b = new()
         {
             Id = newId,
             Amount = input.Amount,
@@ -68,11 +76,25 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             IsSaving = input.IsSaving,
             Title = input.Title,
             ValuationDate = input.ValuationDate.ToDateOnly()
-        });
+        };
 
-        return new()
+        billings.Add(b);
+
+        return new AddBilling.Output
         {
-            NewId = newId
+            Id = b.Id,
+            ValuationDate = new()
+            {
+                Year = b.ValuationDate.Year,
+                Month = b.ValuationDate.Month,
+                Day = b.ValuationDate.Day
+            },
+            Title = b.Title,
+            Amount = b.Amount,
+            Checked = b.Checked,
+            Comment = b.Comment,
+            IsArchived = b.IsArchived,
+            IsSaving = b.IsSaving
         };
     }
 
@@ -81,7 +103,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         var billing = billings.SingleOrDefault(b => b.Id == input.Id);
 
         if (billing == null)
-            return new() { HasBeenDeleted = false };
+            throw new Exception("billing not found");
 
         billings.Remove(billing);
 
@@ -90,20 +112,35 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
     public EditBilling.Output Handle(EditBilling.Input input)
     {
-        var billing = billings.SingleOrDefault(b => b.Id == input.Id);
+        var b = billings.SingleOrDefault(b => b.Id == input.Id);
 
-        if (billing == null)
-            return new() { HasBeenEdited = false };
+        if (b == null)
+            throw new Exception("billing not found");
 
-        billing.Amount = input.Amount;
-        billing.Checked = input.Checked;
-        billing.Comment = input.Comment;
-        billing.IsArchived = input.IsArchived;
-        billing.IsSaving = input.IsSaving;
-        billing.Title = input.Title;
-        billing.ValuationDate = input.ValuationDate.ToDateOnly();
+        b.Amount = input.Amount;
+        b.Checked = input.Checked;
+        b.Comment = input.Comment;
+        b.IsArchived = input.IsArchived;
+        b.IsSaving = input.IsSaving;
+        b.Title = input.Title;
+        b.ValuationDate = input.ValuationDate.ToDateOnly();
 
-        return new() { HasBeenEdited = true };
+        return new()
+        {
+            Id = b.Id,
+            ValuationDate = new()
+            {
+                Year = b.ValuationDate.Year,
+                Month = b.ValuationDate.Month,
+                Day = b.ValuationDate.Day
+            },
+            Title = b.Title,
+            Amount = b.Amount,
+            Checked = b.Checked,
+            Comment = b.Comment,
+            IsArchived = b.IsArchived,
+            IsSaving = b.IsSaving
+        };
     }
 
     public GetBilling.Output Handle(GetBilling.Input input)
@@ -127,8 +164,29 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         };
     }
 
+    public GetSummary.Output[] Handle(GetSummary.Input input)
+        => billings.Select(b => new GetSummary.Output()
+        {
+            ValuationDate = b.ValuationDate,
+            Amount = b.Amount
+        }).ToArray();
+
     public ListBillings.Output[] Handle(ListBillings.Input input)
     {
+        var query = billings.AsQueryable();
+
+        if (!string.IsNullOrEmpty(input.Title))
+            query = query.Where(n => n.Title.ToLower().Contains(input.Title.ToLower()));
+        if (input.Amount.HasValue)
+            query = query.Where(n => input.Amount - (input.DeltaAmount ?? 0) <= n.Amount
+                && n.Amount <= input.Amount + (input.DeltaAmount ?? 0));
+        if (input.StartDate != null)
+            query = query.Where(n => input.StartDate.ToDateOnly() <= n.ValuationDate);
+        if (input.EndDate != null)
+            query = query.Where(n => n.ValuationDate <= input.EndDate.ToDateOnly());
+        if (!(input.WithArchived ?? false))
+            query = query.Where(n => !n.IsArchived);
+
         return billings
             .Select(b => new ListBillings.Output
             {
@@ -149,5 +207,20 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             .ToArray();
     }
 
+    private SetChecked.Output Handle(SetChecked.Input input)
+    {
+        var b = billings.SingleOrDefault(b => b.Id == input.Id);
+
+        if (b == null)
+            throw new Exception("billing not found");
+
+        b.Checked = input.Checked;
+
+        return new()
+        {
+            Id = b.Id,
+            Checked = b.Checked
+        };
+    }
 
 }

@@ -28,5 +28,18 @@ public class Input
 public class Output
 {
     [Required]
-    public required bool HasBeenEdited { get; init; }
+    public required Guid Id { get; set; }
+    [Required]
+    public required ShortDate ValuationDate { get; set; } = new();
+    [Required]
+    public required string Title { get; set; } = "";
+    [Required]
+    public required decimal Amount { get; set; }
+    [Required]
+    public required bool Checked { get; set; }
+    public required string? Comment { get; set; }
+    [Required]
+    public required bool IsArchived { get; set; }
+    [Required]
+    public required bool IsSaving { get; set; }
 }

@@ -8,7 +8,12 @@ public class Query : WorkspaceQuery<Input, Output[]> { }
 
 public class Input
 {
+    public ShortDate? StartDate { get; set; }
+    public ShortDate? EndDate { get; set; }
+    public decimal? Amount { get; set; }
+    public decimal? DeltaAmount { get; set; }
     public string? Title { get; set; }
+    public bool? WithArchived { get; set; }
 }
 
 public class Output

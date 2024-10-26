@@ -1,21 +1,21 @@
 // fichier auto-généré !!
 import {
-  LegendaryGuacamoleWebApiApi,
+  WorkspaceApi,
 } from "../api";
 import { useApiRef } from "../hooks";
 
 export interface IBaseApiContext {
-  legendaryGuacamoleWebApiApi: LegendaryGuacamoleWebApiApi;
+  workspaceApi: WorkspaceApi;
 }
 
 export const defaultBaseApiContextValues: IBaseApiContext = {
-  legendaryGuacamoleWebApiApi: new LegendaryGuacamoleWebApiApi(),
+  workspaceApi: new WorkspaceApi(),
 };
 
 export function useAllApisRef(): IBaseApiContext {
-  const legendaryGuacamoleWebApiApiRef = useApiRef(LegendaryGuacamoleWebApiApi);
+  const workspaceApiRef = useApiRef(WorkspaceApi);
 
   return {
-    legendaryGuacamoleWebApiApi: legendaryGuacamoleWebApiApiRef.current,
+    workspaceApi: workspaceApiRef.current,
   };
 }

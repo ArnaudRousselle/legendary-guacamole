@@ -1,6 +1,6 @@
 namespace LegendaryGuacamole.WebApi.Models;
 
-public class RepetitiveBilling
+public record RepetitiveBilling
 {
     public Guid Id { get; internal set; }
     public DateOnly NextValuationDate { get; internal set; }

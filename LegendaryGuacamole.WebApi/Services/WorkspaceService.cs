@@ -5,24 +5,20 @@ namespace LegendaryGuacamole.WebApi.Services;
 public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
     : BackgroundService
 {
-    private readonly List<Models.Billing> billings = [];
-    private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
+    private Models.Workspace? workspace;
     //todo ARNAUD: utiliser un state de type record et le passer aux queries pour qu'elles le déserialisent
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         const string fileName = "./data.lgc";
 
-        Models.Workspace workspace = File.Exists(fileName)
+        workspace = File.Exists(fileName)
             ? System.Text.Json.JsonSerializer.Deserialize<Models.Workspace>(File.ReadAllText(fileName))!
             : new();
 
-        billings.AddRange(workspace.Billings);
-        repetitiveBillings.AddRange(workspace.RepetitiveBillings);
-
         //todo ARNAUD: à supprimer
         for (var i = 0; i < 100; i++)
-            billings.Add(new()
+            workspace.Billings = workspace.Billings.Add(new()
             {
                 Id = Guid.NewGuid(),
                 Amount = i + 1,
@@ -41,18 +37,12 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
                 try
                 {
-                    object output = message switch
+                    switch (message)
                     {
-                        AddBilling.Query q => Handle(q.Input),
-                        DeleteBilling.Query q => Handle(q.Input),
-                        EditBilling.Query q => Handle(q.Input),
-                        GetBilling.Query q => Handle(q.Input),
-                        GetSummary.Query q => Handle(q.Input),
-                        ListBillings.Query q => Handle(q.Input),
-                        SetChecked.Query q => Handle(q.Input),
-                        _ => throw new NotImplementedException()
-                    };
-                    await message.OnSuccess(output);
+
+                    }
+                    //todo ARNAUD: à continuer
+                    await message.OnSuccess(workspace);
                 }
                 catch (Exception ex)
                 {

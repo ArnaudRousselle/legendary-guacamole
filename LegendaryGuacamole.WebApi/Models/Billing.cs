@@ -1,6 +1,6 @@
 namespace LegendaryGuacamole.WebApi.Models;
 
-public class Billing
+public record Billing
 {
     public Guid Id { get; internal set; }
     public DateOnly ValuationDate { get; internal set; }

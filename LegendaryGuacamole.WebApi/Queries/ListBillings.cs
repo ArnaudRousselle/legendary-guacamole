@@ -1,12 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Dtos;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.ListBillings;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output[]> { }
+public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsResult, ListBillingsOutput[]>
+{
+    public override ListBillingsOutput[] Map(Workspace workspace, ListBillingsResult result)
+    {
+        throw new NotImplementedException();
+    }
+}
 
-public class Input
+public class ListBillingsInput
 {
     public ShortDate? StartDate { get; set; }
     public ShortDate? EndDate { get; set; }
@@ -16,7 +23,12 @@ public class Input
     public bool? WithArchived { get; set; }
 }
 
-public class Output
+public class ListBillingsResult
+{
+
+}
+
+public class ListBillingsOutput
 {
     [Required]
     public required Guid Id { get; set; }

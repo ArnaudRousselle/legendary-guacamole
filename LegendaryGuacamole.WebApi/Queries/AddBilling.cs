@@ -1,12 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Dtos;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.AddBilling;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output> { }
+public class AddBilling : WorkspaceQuery<AddBillingInput, AddBillingResult, AddBillingOutput>
+{
+    public override AddBillingOutput Map(Workspace workspace, AddBillingResult result)
+    {
+        throw new NotImplementedException();
+    }
+}
 
-public class Input
+public class AddBillingInput
 {
     [Required]
     public ShortDate ValuationDate { get; set; } = new();
@@ -23,7 +30,13 @@ public class Input
     public bool IsSaving { get; set; }
 }
 
-public class Output
+public class AddBillingResult
+{
+    [Required]
+    public required Guid Id { get; set; }
+}
+
+public class AddBillingOutput
 {
     [Required]
     public required Guid Id { get; set; }

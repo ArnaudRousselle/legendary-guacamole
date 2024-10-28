@@ -1,34 +1,28 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.GetSummary;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output[], Result>
+public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryResult, GetSummaryOutput>
 {
-    public override Result Map(Output[] output)
-        => new()
-        {
-            Amount = output
-                .OrderBy(n => n.ValuationDate)
-                .Select(n => n.Amount)
-                .Sum()
-        };
+    public override GetSummaryOutput Map(Workspace workspace, GetSummaryResult result)
+    {
+        throw new NotImplementedException();
+    }
 }
 
-public class Input
+public class GetSummaryInput
 {
 }
 
-public class Output
+public class GetSummaryResult
 {
-    [Required]
-    public required DateOnly ValuationDate { get; set; }
-    [Required]
-    public required decimal Amount { get; set; }
 }
 
-public class Result
+public class GetSummaryOutput
 {
     [Required]
     public required decimal Amount { get; set; }
 }
+

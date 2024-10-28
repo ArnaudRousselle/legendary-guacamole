@@ -1,18 +1,29 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Dtos;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.GetBilling;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output> { }
+public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingResult, GetBillingOutput>
+{
+    public override GetBillingOutput Map(Workspace workspace, GetBillingResult result)
+    {
+        throw new NotImplementedException();
+    }
+}
 
-public class Input
+public class GetBillingInput
 {
     [Required]
     public Guid Id { get; init; }
 }
 
-public class Output
+public class GetBillingResult
+{
+}
+
+public class GetBillingOutput
 {
     [Required]
     public required Guid Id { get; set; }

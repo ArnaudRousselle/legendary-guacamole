@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    //todo ARNAUD: voir si encore utile
     options.CustomSchemaIds(type => (type.Namespace?.Split(".")?.LastOrDefault() ?? "") + type.Name);
 });
 
@@ -47,9 +48,6 @@ AppDomain.CurrentDomain
     .ForEach(queryType =>
     {
         var genericArguments = queryType.BaseType!.GetGenericArguments();
-
-        if (genericArguments.Length == 2)
-            genericArguments = queryType.BaseType!.BaseType!.GetGenericArguments();
 
         var name = (queryType.Namespace?.Split(".")?.LastOrDefault() ?? "") + queryType.Name;
 

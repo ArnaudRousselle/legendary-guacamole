@@ -7,7 +7,7 @@ import { PropsWithChildren } from "react";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false, //todo ARNAUD: mettre false seulement en dev
+      refetchOnWindowFocus: !import.meta.env.DEV,
     },
   },
 });

@@ -7,6 +7,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 {
     private readonly List<Models.Billing> billings = [];
     private readonly List<Models.RepetitiveBilling> repetitiveBillings = [];
+    //todo ARNAUD: utiliser un state de type record et le passer aux queries pour qu'elles le déserialisent
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {

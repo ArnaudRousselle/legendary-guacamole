@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { useApi } from "../../../contexts";
 import {
   CircularProgress,
   Paper,
@@ -14,18 +12,15 @@ import {
 import { formatShortDate } from "../../../utils/formatShortDate";
 import InfoIcon from "@mui/icons-material/Info";
 import { CheckedCheckbox } from "./CheckedCheckbox";
+import { useListBillingsQuery } from "../../../queries/billings";
 
 export const BillingsListing = () => {
-  const { workspaceApi } = useApi();
-  const { isFetching, data: billings = [] } = useQuery({
-    queryKey: ["billingsListing"],
-    queryFn: async () => await workspaceApi.listBillingsQuery({}),
-  });
+  const { isFetching, data: billings = [] } = useListBillingsQuery();
 
   if (isFetching) return <CircularProgress />;
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="billings table">
+    <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+      <Table stickyHeader aria-label="billings table">
         <TableHead>
           <TableRow>
             <TableCell>Titre</TableCell>

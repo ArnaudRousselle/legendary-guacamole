@@ -41,25 +41,25 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                     switch (message)
                     {
                         case AddBilling q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case DeleteBilling q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case EditBilling q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case GetBilling q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case GetSummary q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case ListBillings q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case SetChecked q:
-                            await q.OnSuccess(Handle(q));
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         default:
                             throw new NotImplementedException();
@@ -74,32 +74,34 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         }
     }
 
-    private QueryResponse<AddBillingResult> Handle(AddBilling q)
+    private AddBillingEvent Handle(AddBilling q)
     {
         var newId = Guid.NewGuid();
 
-        workspace = workspace with
+        Models.Billing newBilling = new()
         {
-            Billings = workspace.Billings.Add(new()
-            {
-                Id = newId,
-                Amount = q.Input.Amount,
-                Checked = q.Input.Checked,
-                Comment = q.Input.Comment,
-                IsArchived = q.Input.IsArchived,
-                IsSaving = q.Input.IsSaving,
-                Title = q.Input.Title,
-                ValuationDate = q.Input.ValuationDate.ToDateOnly()
-            })
+            Id = newId,
+            Amount = q.Input.Amount,
+            Checked = q.Input.Checked,
+            Comment = q.Input.Comment,
+            IsArchived = q.Input.IsArchived,
+            IsSaving = q.Input.IsSaving,
+            Title = q.Input.Title,
+            ValuationDate = q.Input.ValuationDate.ToDateOnly()
         };
 
-        return Success(new AddBillingResult
+        workspace = workspace with
         {
-            Id = newId
-        });
+            Billings = workspace.Billings.Add(newBilling)
+        };
+
+        return new()
+        {
+            Billing = newBilling
+        };
     }
 
-    private QueryResponse<DeleteBillingResult> Handle(DeleteBilling q)
+    private DeleteBillingEvent Handle(DeleteBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
 
@@ -111,61 +113,90 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             Billings = workspace.Billings.RemoveAt(index)
         };
 
-        return Success(new DeleteBillingResult());
+        return new();
     }
 
-    private QueryResponse<EditBillingResult> Handle(EditBilling q)
+    private EditBillingEvent Handle(EditBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
 
         if (index < 0)
             throw new Exception("billing not found");
 
-        var billing = workspace.Billings[index];
+        var billing = workspace.Billings[index] with
+        {
+            Amount = q.Input.Amount,
+            Checked = q.Input.Checked,
+            Comment = q.Input.Comment,
+            IsArchived = q.Input.IsArchived,
+            IsSaving = q.Input.IsSaving,
+            Title = q.Input.Title,
+            ValuationDate = q.Input.ValuationDate.ToDateOnly(),
+        };
 
         workspace = workspace with
         {
             Billings = workspace.Billings
                 .RemoveAt(index)
-                .Insert(index, billing with
-                {
-                    Amount = q.Input.Amount,
-                    Checked = q.Input.Checked,
-                    Comment = q.Input.Comment,
-                    IsArchived = q.Input.IsArchived,
-                    IsSaving = q.Input.IsSaving,
-                    Title = q.Input.Title,
-                    ValuationDate = q.Input.ValuationDate.ToDateOnly(),
-                })
+                .Insert(index, billing)
         };
 
-        return Success(new EditBillingResult
+        return new()
         {
-            Index = index
-        });
+            Billing = billing
+        };
     }
 
-    private QueryResponse<GetBillingResult> Handle(GetBilling q)
+    private GetBillingEvent Handle(GetBilling q)
     {
-        throw new NotImplementedException();
+        var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
+
+        if (index < 0)
+            throw new Exception("billing not found");
+
+        return new()
+        {
+            Billing = workspace.Billings[index]
+        };
     }
 
-    private QueryResponse<GetSummaryResult> Handle(GetSummary q)
+    private GetSummaryEvent Handle(GetSummary q)
     {
-        throw new NotImplementedException();
+        return new();
     }
 
-    private QueryResponse<ListBillingsResult> Handle(ListBillings q)
+    private ListBillingsEvent Handle(ListBillings q)
     {
-        throw new NotImplementedException();
+        return new();
     }
 
-    private QueryResponse<SetCheckedResult> Handle(SetChecked q)
+    private SetCheckedEvent Handle(SetChecked q)
     {
-        throw new NotImplementedException();
+        var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
+
+        if (index < 0)
+            throw new Exception("billing not found");
+
+        var billing = workspace.Billings[index] with
+        {
+            Checked = q.Input.Checked,
+        };
+
+        workspace = workspace with
+        {
+            Billings = workspace.Billings
+                .RemoveAt(index)
+                .Insert(index, billing)
+        };
+
+        return new()
+        {
+            Id = billing.Id,
+            Checked = billing.Checked
+        };
     }
 
-    private QueryResponse<T> Success<T>(T result)
+    private QueryResponse<T> ToQueryResponse<T>(T result)
     => new()
     {
         Workspace = workspace,

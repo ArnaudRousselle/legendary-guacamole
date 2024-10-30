@@ -5,9 +5,9 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsResult, ListBillingsOutput[]>
+public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent, ListBillingsOutput[]>
 {
-    public override ListBillingsOutput[] Map(Workspace workspace, ListBillingsResult result)
+    public override ListBillingsOutput[] Map(Workspace workspace, ListBillingsEvent evt)
     {
         throw new NotImplementedException();
     }
@@ -23,7 +23,7 @@ public class ListBillingsInput
     public bool? WithArchived { get; set; }
 }
 
-public class ListBillingsResult
+public class ListBillingsEvent
 {
 
 }

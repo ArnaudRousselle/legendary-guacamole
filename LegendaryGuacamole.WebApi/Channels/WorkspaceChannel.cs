@@ -15,7 +15,7 @@ public class WorkspaceChannel
 
     public ChannelReader<IWorkspaceQuery> Reader { get => channel.Reader; }
 
-    public async Task<TOutput> QueryAsync<TInput, TResult, TOutput>(WorkspaceQuery<TInput, TResult, TOutput> query)
+    public async Task<TOutput> QueryAsync<TInput, TEvent, TOutput>(WorkspaceQuery<TInput, TEvent, TOutput> query)
     {
         await channel.Writer.WriteAsync(query);
         return await query.Response;
@@ -33,11 +33,11 @@ public class QueryResponse<T>
     public required T Result { get; set; }
 }
 
-public abstract class WorkspaceQuery<TInput, TResult, TOutput> : IWorkspaceQuery
+public abstract class WorkspaceQuery<TInput, TEvent, TOutput> : IWorkspaceQuery
 {
     public required TInput Input { get; set; }
 
-    private Channel<QueryResponse<TResult>?> channel = Channel.CreateUnbounded<QueryResponse<TResult>?>(
+    private Channel<QueryResponse<TEvent>?> channel = Channel.CreateUnbounded<QueryResponse<TEvent>?>(
         new UnboundedChannelOptions
         {
             SingleReader = true,
@@ -45,7 +45,7 @@ public abstract class WorkspaceQuery<TInput, TResult, TOutput> : IWorkspaceQuery
         }
     );
 
-    public async Task OnSuccess(QueryResponse<TResult> response)
+    public async Task OnSuccess(QueryResponse<TEvent> response)
     {
         await channel.Writer.WriteAsync(response);
         channel.Writer.Complete();
@@ -62,12 +62,12 @@ public abstract class WorkspaceQuery<TInput, TResult, TOutput> : IWorkspaceQuery
         get => ReadResponse();
     }
 
-    public abstract TOutput Map(Workspace workspace, TResult result);
+    public abstract TOutput Map(Workspace workspace, TEvent evt);
 
     private async Task<TOutput> ReadResponse()
     {
         await channel.Reader.WaitToReadAsync();
-        var output = (channel.Reader.TryRead(out QueryResponse<TResult>? response) ? response : default)
+        var output = (channel.Reader.TryRead(out QueryResponse<TEvent>? response) ? response : default)
             ?? throw new Exception("internal error");
         return Map(output.Workspace, output.Result);
     }

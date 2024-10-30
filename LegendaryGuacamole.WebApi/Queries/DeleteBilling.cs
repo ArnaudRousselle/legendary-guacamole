@@ -4,12 +4,10 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class DeleteBilling : WorkspaceQuery<DeleteBillingInput, DeleteBillingResult, DeleteBillingOutput>
+public class DeleteBilling : WorkspaceQuery<DeleteBillingInput, DeleteBillingEvent, DeleteBillingOutput>
 {
-    public override DeleteBillingOutput Map(Workspace workspace, DeleteBillingResult result)
-    {
-        throw new NotImplementedException();
-    }
+    public override DeleteBillingOutput Map(Workspace workspace, DeleteBillingEvent evt)
+    => new();
 }
 
 public class DeleteBillingInput
@@ -18,7 +16,7 @@ public class DeleteBillingInput
     public Guid Id { get; init; }
 }
 
-public class DeleteBillingResult
+public class DeleteBillingEvent
 {
 }
 

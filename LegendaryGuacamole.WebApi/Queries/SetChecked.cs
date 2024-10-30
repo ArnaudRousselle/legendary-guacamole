@@ -5,12 +5,14 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class SetChecked : WorkspaceQuery<SetCheckedInput, SetCheckedResult, SetCheckedOutput>
+public class SetChecked : WorkspaceQuery<SetCheckedInput, SetCheckedEvent, SetCheckedOutput>
 {
-    public override SetCheckedOutput Map(Workspace workspace, SetCheckedResult result)
+    public override SetCheckedOutput Map(Workspace workspace, SetCheckedEvent evt)
+    => new()
     {
-        throw new NotImplementedException();
-    }
+        Id = evt.Id,
+        Checked = evt.Checked
+    };
 }
 
 public class SetCheckedInput
@@ -21,10 +23,10 @@ public class SetCheckedInput
     public bool Checked { get; set; }
 }
 
-public class SetCheckedResult
+public class SetCheckedEvent
 {
-    [Required]
     public required Guid Id { get; set; }
+    public required bool Checked { get; set; }
 }
 
 public class SetCheckedOutput

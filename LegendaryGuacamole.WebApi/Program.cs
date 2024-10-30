@@ -52,11 +52,11 @@ AppDomain.CurrentDomain
         var name = (queryType.Namespace?.Split(".")?.LastOrDefault() ?? "") + queryType.Name;
 
         var inputType = genericArguments[0];
-        var outputType = genericArguments[1];
-        var resultType = genericArguments[2];
+        var eventType = genericArguments[1];
+        var outputType = genericArguments[2];
 
         var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
-        mapMethod?.MakeGenericMethod([queryType, inputType, outputType, resultType])
+        mapMethod?.MakeGenericMethod([queryType, inputType, eventType, outputType])
             .Invoke(null, [app, name, channel]);
     });
 

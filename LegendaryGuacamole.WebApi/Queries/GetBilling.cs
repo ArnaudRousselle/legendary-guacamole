@@ -5,12 +5,25 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingResult, GetBillingOutput>
+public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingEvent, GetBillingOutput>
 {
-    public override GetBillingOutput Map(Workspace workspace, GetBillingResult result)
+    public override GetBillingOutput Map(Workspace workspace, GetBillingEvent evt)
+    => new()
     {
-        throw new NotImplementedException();
-    }
+        Id = evt.Billing.Id,
+        ValuationDate = new()
+        {
+            Year = evt.Billing.ValuationDate.Year,
+            Month = evt.Billing.ValuationDate.Month,
+            Day = evt.Billing.ValuationDate.Day
+        },
+        Title = evt.Billing.Title,
+        Amount = evt.Billing.Amount,
+        Checked = evt.Billing.Checked,
+        Comment = evt.Billing.Comment,
+        IsArchived = evt.Billing.IsArchived,
+        IsSaving = evt.Billing.IsSaving
+    };
 }
 
 public class GetBillingInput
@@ -19,8 +32,9 @@ public class GetBillingInput
     public Guid Id { get; init; }
 }
 
-public class GetBillingResult
+public class GetBillingEvent
 {
+    public required Billing Billing { get; set; }
 }
 
 public class GetBillingOutput

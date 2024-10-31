@@ -1,13 +1,13 @@
 namespace LegendaryGuacamole.WebApi.Models;
 
-public class RepetitiveBilling
+public record RepetitiveBilling
 {
-    public Guid Id { get; internal set; }
-    public DateOnly NextValuationDate { get; internal set; }
-    public string Title { get; internal set; } = "";
-    public decimal Amount { get; internal set; }
-    public bool IsSaving { get; internal set; }
-    public Frequence Frequence { get; internal set; }
+    public required Guid Id { get; init; }
+    public required DateOnly NextValuationDate { get; init; }
+    public required string Title { get; init; }
+    public required decimal Amount { get; init; }
+    public required bool IsSaving { get; init; }
+    public required Frequence Frequence { get; init; }
 }
 
 public enum Frequence

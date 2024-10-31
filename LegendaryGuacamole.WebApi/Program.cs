@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.CustomSchemaIds(type => (type.Namespace?.Split(".")?.LastOrDefault() ?? "") + type.Name);
+    //todo ARNAUD: voir si encore utile
+    //options.CustomSchemaIds(type => (type.Namespace?.Split(".")?.LastOrDefault() ?? "") + type.Name);
 });
 
 builder.Services.AddCors(o =>
@@ -35,7 +36,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("CorsPolicy");
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 AppDomain.CurrentDomain
     .GetAssemblies()
@@ -48,18 +49,13 @@ AppDomain.CurrentDomain
     {
         var genericArguments = queryType.BaseType!.GetGenericArguments();
 
-        if (genericArguments.Length == 2)
-            genericArguments = queryType.BaseType!.BaseType!.GetGenericArguments();
-
-        var name = (queryType.Namespace?.Split(".")?.LastOrDefault() ?? "") + queryType.Name;
-
         var inputType = genericArguments[0];
-        var outputType = genericArguments[1];
-        var resultType = genericArguments[2];
+        var eventType = genericArguments[1];
+        var outputType = genericArguments[2];
 
         var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
-        mapMethod?.MakeGenericMethod([queryType, inputType, outputType, resultType])
-            .Invoke(null, [app, name, channel]);
+        mapMethod?.MakeGenericMethod([queryType, inputType, eventType, outputType])
+            .Invoke(null, [app, queryType.Name, channel]);
     });
 
 app.Run();

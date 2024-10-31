@@ -1,18 +1,25 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.DeleteBilling;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output> { }
+public class DeleteBilling : WorkspaceQuery<DeleteBillingInput, DeleteBillingEvent, DeleteBillingOutput>
+{
+    public override DeleteBillingOutput Map(Workspace workspace, DeleteBillingEvent evt)
+    => new();
+}
 
-public class Input
+public class DeleteBillingInput
 {
     [Required]
     public Guid Id { get; init; }
 }
 
-public class Output
+public class DeleteBillingEvent
 {
-    [Required]
-    public required bool HasBeenDeleted { get; init; }
+}
+
+public class DeleteBillingOutput
+{
 }

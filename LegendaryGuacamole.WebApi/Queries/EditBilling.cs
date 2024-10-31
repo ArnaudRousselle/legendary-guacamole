@@ -1,12 +1,32 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Dtos;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.EditBilling;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output> { }
+public class EditBilling : WorkspaceQuery<EditBillingInput, EditBillingEvent, EditBillingOutput>
+{
+    public override EditBillingOutput Map(Workspace workspace, EditBillingEvent evt)
+    => new()
+    {
+        Id = evt.Billing.Id,
+        ValuationDate = new()
+        {
+            Year = evt.Billing.ValuationDate.Year,
+            Month = evt.Billing.ValuationDate.Month,
+            Day = evt.Billing.ValuationDate.Day
+        },
+        Title = evt.Billing.Title,
+        Amount = evt.Billing.Amount,
+        Checked = evt.Billing.Checked,
+        Comment = evt.Billing.Comment,
+        IsArchived = evt.Billing.IsArchived,
+        IsSaving = evt.Billing.IsSaving
+    };
+}
 
-public class Input
+public class EditBillingInput
 {
     [Required]
     public Guid Id { get; set; }
@@ -25,7 +45,12 @@ public class Input
     public bool IsSaving { get; set; }
 }
 
-public class Output
+public class EditBillingEvent
+{
+    public required Billing Billing { get; set; }
+}
+
+public class EditBillingOutput
 {
     [Required]
     public required Guid Id { get; set; }

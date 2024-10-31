@@ -1,12 +1,21 @@
 using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Dtos;
+using LegendaryGuacamole.WebApi.Models;
 
-namespace LegendaryGuacamole.WebApi.SetChecked;
+namespace LegendaryGuacamole.WebApi.Queries;
 
-public class Query : WorkspaceQuery<Input, Output> { }
+public class SetChecked : WorkspaceQuery<SetCheckedInput, SetCheckedEvent, SetCheckedOutput>
+{
+    public override SetCheckedOutput Map(Workspace workspace, SetCheckedEvent evt)
+    => new()
+    {
+        Id = evt.Id,
+        Checked = evt.Checked
+    };
+}
 
-public class Input
+public class SetCheckedInput
 {
     [Required]
     public Guid Id { get; set; }
@@ -14,7 +23,13 @@ public class Input
     public bool Checked { get; set; }
 }
 
-public class Output
+public class SetCheckedEvent
+{
+    public required Guid Id { get; set; }
+    public required bool Checked { get; set; }
+}
+
+public class SetCheckedOutput
 {
     [Required]
     public Guid Id { get; set; }

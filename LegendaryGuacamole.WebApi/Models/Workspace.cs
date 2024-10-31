@@ -1,7 +1,9 @@
+using System.Collections.Immutable;
+
 namespace LegendaryGuacamole.WebApi.Models;
 
-public class Workspace
+public record Workspace
 {
-    public Billing[] Billings { get; set; } = [];
-    public RepetitiveBilling[] RepetitiveBillings { get; set; } = [];
+    public required ImmutableArray<Billing> Billings { get; init; }
+    public required ImmutableArray<RepetitiveBilling> RepetitiveBillings { get; init; }
 }

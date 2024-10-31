@@ -1,13 +1,13 @@
 namespace LegendaryGuacamole.WebApi.Models;
 
-public class Billing
+public record Billing
 {
-    public Guid Id { get; internal set; }
-    public DateOnly ValuationDate { get; internal set; }
-    public string Title { get; internal set; } = "";
-    public decimal Amount { get; internal set; }
-    public bool Checked { get; internal set; }
-    public string? Comment { get; internal set; }
-    public bool IsArchived { get; internal set; }
-    public bool IsSaving { get; internal set; }
+    public required Guid Id { get; init; }
+    public required DateOnly ValuationDate { get; init; }
+    public required string Title { get; init; }
+    public required decimal Amount { get; init; }
+    public required bool Checked { get; init; }
+    public required string? Comment { get; init; }
+    public required bool IsArchived { get; init; }
+    public required bool IsSaving { get; init; }
 }

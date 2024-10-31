@@ -16,44 +16,44 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface DtosShortDate
+ * @interface ShortDate
  */
-export interface DtosShortDate {
+export interface ShortDate {
     /**
      * 
      * @type {number}
-     * @memberof DtosShortDate
+     * @memberof ShortDate
      */
     year: number;
     /**
      * 
      * @type {number}
-     * @memberof DtosShortDate
+     * @memberof ShortDate
      */
     month: number;
     /**
      * 
      * @type {number}
-     * @memberof DtosShortDate
+     * @memberof ShortDate
      */
     day: number;
 }
 
 /**
- * Check if a given object implements the DtosShortDate interface.
+ * Check if a given object implements the ShortDate interface.
  */
-export function instanceOfDtosShortDate(value: object): value is DtosShortDate {
+export function instanceOfShortDate(value: object): value is ShortDate {
     if (!('year' in value) || value['year'] === undefined) return false;
     if (!('month' in value) || value['month'] === undefined) return false;
     if (!('day' in value) || value['day'] === undefined) return false;
     return true;
 }
 
-export function DtosShortDateFromJSON(json: any): DtosShortDate {
-    return DtosShortDateFromJSONTyped(json, false);
+export function ShortDateFromJSON(json: any): ShortDate {
+    return ShortDateFromJSONTyped(json, false);
 }
 
-export function DtosShortDateFromJSONTyped(json: any, ignoreDiscriminator: boolean): DtosShortDate {
+export function ShortDateFromJSONTyped(json: any, ignoreDiscriminator: boolean): ShortDate {
     if (json == null) {
         return json;
     }
@@ -65,7 +65,7 @@ export function DtosShortDateFromJSONTyped(json: any, ignoreDiscriminator: boole
     };
 }
 
-export function DtosShortDateToJSON(value?: DtosShortDate | null): any {
+export function ShortDateToJSON(value?: ShortDate | null): any {
     if (value == null) {
         return value;
     }

@@ -5,16 +5,27 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useApi } from "../contexts";
-import { ListBillingsOutput } from "../api";
+import { GetSummaryOutput, ListBillingsOutput } from "../api";
 
 const billingsListingQueryKey: QueryKey = ["billingsListing"];
 type BillingsListingReturnType = Array<ListBillingsOutput>;
+
+const billingsAmountSummaryQueryKey: QueryKey = ["billingsAmountSummary"];
+type BillingsAmountSummaryReturnType = GetSummaryOutput;
 
 export function useListBillingsQuery() {
   const { workspaceApi } = useApi();
   return useQuery<BillingsListingReturnType>({
     queryKey: billingsListingQueryKey,
-    queryFn: async () => await workspaceApi.listBillingsQuery({}),
+    queryFn: async () => await workspaceApi.listBillings({}),
+  });
+}
+
+export function useGetSummaryQuery() {
+  const { workspaceApi } = useApi();
+  return useQuery<BillingsAmountSummaryReturnType>({
+    queryKey: billingsAmountSummaryQueryKey,
+    queryFn: async () => await workspaceApi.getSummary({}),
   });
 }
 
@@ -23,11 +34,11 @@ export function useSetCheckedQuery(billingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (checked: boolean) =>
-      await workspaceApi.setCheckedQuery({
+      await workspaceApi.setChecked({
         id: billingId,
         checked,
       }),
-    onSuccess: (res) =>
+    onSuccess: (res) => {
       queryClient.setQueryData<BillingsListingReturnType>(
         billingsListingQueryKey,
         (prev) => {
@@ -41,6 +52,10 @@ export function useSetCheckedQuery(billingId: string) {
                 ...prev.slice(index + 1),
               ];
         }
-      ),
+      );
+      queryClient.invalidateQueries({
+        queryKey: billingsAmountSummaryQueryKey,
+      });
+    },
   });
 }

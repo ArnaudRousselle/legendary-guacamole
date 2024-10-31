@@ -1,5 +1,6 @@
 import { GridItem } from "./components/design/GridItem";
 import BillingsListing from "./components/tiles/BillingsListing";
+import { BillingsSummary } from "./components/tiles/BillingsSummary/BillingsSummary";
 import { ApiContextProvider, QueryClientProvider } from "./providers";
 import Grid from "@mui/material/Grid2";
 
@@ -14,7 +15,9 @@ function App() {
             </GridItem>
           </Grid>
           <Grid size={4}>
-            <GridItem>résultats</GridItem>
+            <GridItem>
+              <BillingsSummary />
+            </GridItem>
           </Grid>
           <Grid size={7}>
             <GridItem>échéancier</GridItem>

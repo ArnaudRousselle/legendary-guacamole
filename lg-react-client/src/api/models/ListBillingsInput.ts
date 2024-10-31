@@ -13,12 +13,12 @@
  */
 
 import { mapValues } from '../runtime';
-import type { DtosShortDate } from './DtosShortDate';
+import type { ShortDate } from './ShortDate';
 import {
-    DtosShortDateFromJSON,
-    DtosShortDateFromJSONTyped,
-    DtosShortDateToJSON,
-} from './DtosShortDate';
+    ShortDateFromJSON,
+    ShortDateFromJSONTyped,
+    ShortDateToJSON,
+} from './ShortDate';
 
 /**
  * 
@@ -28,16 +28,16 @@ import {
 export interface ListBillingsInput {
     /**
      * 
-     * @type {DtosShortDate}
+     * @type {ShortDate}
      * @memberof ListBillingsInput
      */
-    startDate?: DtosShortDate;
+    startDate?: ShortDate;
     /**
      * 
-     * @type {DtosShortDate}
+     * @type {ShortDate}
      * @memberof ListBillingsInput
      */
-    endDate?: DtosShortDate;
+    endDate?: ShortDate;
     /**
      * 
      * @type {number}
@@ -81,8 +81,8 @@ export function ListBillingsInputFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'startDate': json['startDate'] == null ? undefined : DtosShortDateFromJSON(json['startDate']),
-        'endDate': json['endDate'] == null ? undefined : DtosShortDateFromJSON(json['endDate']),
+        'startDate': json['startDate'] == null ? undefined : ShortDateFromJSON(json['startDate']),
+        'endDate': json['endDate'] == null ? undefined : ShortDateFromJSON(json['endDate']),
         'amount': json['amount'] == null ? undefined : json['amount'],
         'deltaAmount': json['deltaAmount'] == null ? undefined : json['deltaAmount'],
         'title': json['title'] == null ? undefined : json['title'],
@@ -96,8 +96,8 @@ export function ListBillingsInputToJSON(value?: ListBillingsInput | null): any {
     }
     return {
         
-        'startDate': DtosShortDateToJSON(value['startDate']),
-        'endDate': DtosShortDateToJSON(value['endDate']),
+        'startDate': ShortDateToJSON(value['startDate']),
+        'endDate': ShortDateToJSON(value['endDate']),
         'amount': value['amount'],
         'deltaAmount': value['deltaAmount'],
         'title': value['title'],

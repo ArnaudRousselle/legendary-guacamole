@@ -13,12 +13,12 @@
  */
 
 import { mapValues } from '../runtime';
-import type { DtosShortDate } from './DtosShortDate';
+import type { ShortDate } from './ShortDate';
 import {
-    DtosShortDateFromJSON,
-    DtosShortDateFromJSONTyped,
-    DtosShortDateToJSON,
-} from './DtosShortDate';
+    ShortDateFromJSON,
+    ShortDateFromJSONTyped,
+    ShortDateToJSON,
+} from './ShortDate';
 
 /**
  * 
@@ -34,10 +34,10 @@ export interface EditBillingInput {
     id: string;
     /**
      * 
-     * @type {DtosShortDate}
+     * @type {ShortDate}
      * @memberof EditBillingInput
      */
-    valuationDate: DtosShortDate;
+    valuationDate: ShortDate;
     /**
      * 
      * @type {string}
@@ -101,7 +101,7 @@ export function EditBillingInputFromJSONTyped(json: any, ignoreDiscriminator: bo
     return {
         
         'id': json['id'],
-        'valuationDate': DtosShortDateFromJSON(json['valuationDate']),
+        'valuationDate': ShortDateFromJSON(json['valuationDate']),
         'title': json['title'],
         'amount': json['amount'],
         'checked': json['checked'],
@@ -118,7 +118,7 @@ export function EditBillingInputToJSON(value?: EditBillingInput | null): any {
     return {
         
         'id': value['id'],
-        'valuationDate': DtosShortDateToJSON(value['valuationDate']),
+        'valuationDate': ShortDateToJSON(value['valuationDate']),
         'title': value['title'],
         'amount': value['amount'],
         'checked': value['checked'],

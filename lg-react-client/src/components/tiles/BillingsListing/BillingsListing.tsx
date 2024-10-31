@@ -11,8 +11,10 @@ import {
 } from "@mui/material";
 import { formatShortDate } from "../../../utils/formatShortDate";
 import InfoIcon from "@mui/icons-material/Info";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { CheckedCheckbox } from "./CheckedCheckbox";
 import { useListBillingsQuery } from "../../../queries/billings";
+import { DropDownButton } from "../../design/DropDownButton";
 
 export const BillingsListing = () => {
   const { isFetching, data: billings = [] } = useListBillingsQuery();
@@ -23,6 +25,7 @@ export const BillingsListing = () => {
       <Table stickyHeader aria-label="billings table">
         <TableHead>
           <TableRow>
+            <TableCell align="center"></TableCell>
             <TableCell>Titre</TableCell>
             <TableCell align="center">Date de valeur</TableCell>
             <TableCell align="right">Montant</TableCell>
@@ -33,6 +36,15 @@ export const BillingsListing = () => {
         <TableBody>
           {billings.map((b) => (
             <TableRow key={b.id}>
+              <TableCell align="center">
+                <DropDownButton
+                  icon={<MoreVertIcon />}
+                  actions={[
+                    { text: "Modifier", onClick: () => console.log("edit") },
+                    { text: "Supprimer", onClick: () => console.log("delete") },
+                  ]}
+                />
+              </TableCell>
               <TableCell>{b.title}</TableCell>
               <TableCell align="center">
                 {formatShortDate(b.valuationDate)}

@@ -16,30 +16,30 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface GetSummaryResult
+ * @interface GetSummaryOutput
  */
-export interface GetSummaryResult {
+export interface GetSummaryOutput {
     /**
      * 
      * @type {number}
-     * @memberof GetSummaryResult
+     * @memberof GetSummaryOutput
      */
     amount: number;
 }
 
 /**
- * Check if a given object implements the GetSummaryResult interface.
+ * Check if a given object implements the GetSummaryOutput interface.
  */
-export function instanceOfGetSummaryResult(value: object): value is GetSummaryResult {
+export function instanceOfGetSummaryOutput(value: object): value is GetSummaryOutput {
     if (!('amount' in value) || value['amount'] === undefined) return false;
     return true;
 }
 
-export function GetSummaryResultFromJSON(json: any): GetSummaryResult {
-    return GetSummaryResultFromJSONTyped(json, false);
+export function GetSummaryOutputFromJSON(json: any): GetSummaryOutput {
+    return GetSummaryOutputFromJSONTyped(json, false);
 }
 
-export function GetSummaryResultFromJSONTyped(json: any, ignoreDiscriminator: boolean): GetSummaryResult {
+export function GetSummaryOutputFromJSONTyped(json: any, ignoreDiscriminator: boolean): GetSummaryOutput {
     if (json == null) {
         return json;
     }
@@ -49,7 +49,7 @@ export function GetSummaryResultFromJSONTyped(json: any, ignoreDiscriminator: bo
     };
 }
 
-export function GetSummaryResultToJSON(value?: GetSummaryResult | null): any {
+export function GetSummaryOutputToJSON(value?: GetSummaryOutput | null): any {
     if (value == null) {
         return value;
     }

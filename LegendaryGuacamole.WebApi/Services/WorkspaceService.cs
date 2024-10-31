@@ -7,7 +7,7 @@ namespace LegendaryGuacamole.WebApi.Services;
 public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
     : BackgroundService
 {
-    private Models.Workspace workspace = new();
+    private Models.Workspace workspace = default!;
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -15,19 +15,28 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
         workspace = File.Exists(fileName)
             ? System.Text.Json.JsonSerializer.Deserialize<Models.Workspace>(File.ReadAllText(fileName))!
-            : new();
+            : new()
+            {
+                Billings = [],
+                RepetitiveBillings = []
+            };
 
         //todo ARNAUD: à supprimer
         for (var i = 0; i < 100; i++)
-            workspace.Billings = workspace.Billings.Add(new()
+            workspace = workspace with
             {
-                Id = Guid.NewGuid(),
-                Amount = i + 1,
-                Checked = true,
-                Title = "Mon titre " + i,
-                Comment = i % 3 == 0 ? "mon commentaire " + i : null,
-                ValuationDate = new DateOnly(2024, 10, 12)
-            });
+                Billings = workspace.Billings.Add(new()
+                {
+                    Id = Guid.NewGuid(),
+                    Amount = i + 1,
+                    Checked = true,
+                    Title = "Mon titre " + i,
+                    Comment = i % 3 == 0 ? "mon commentaire " + i : null,
+                    ValuationDate = new DateOnly(2024, 10, 12),
+                    IsArchived = false,
+                    IsSaving = false
+                })
+            };
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {

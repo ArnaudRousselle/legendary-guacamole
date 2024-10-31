@@ -7,9 +7,13 @@ namespace LegendaryGuacamole.WebApi.Queries;
 public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryEvent, GetSummaryOutput>
 {
     public override GetSummaryOutput Map(Workspace workspace, GetSummaryEvent evt)
+    => new()
     {
-        throw new NotImplementedException();
-    }
+        Amount = workspace.Billings
+            .Where(b => b.Checked)
+            .Select(b => b.Amount)
+            .Sum()
+    };
 }
 
 public class GetSummaryInput

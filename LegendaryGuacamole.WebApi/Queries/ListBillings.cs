@@ -8,9 +8,26 @@ namespace LegendaryGuacamole.WebApi.Queries;
 public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent, ListBillingsOutput[]>
 {
     public override ListBillingsOutput[] Map(Workspace workspace, ListBillingsEvent evt)
-    {
-        throw new NotImplementedException();
-    }
+    => workspace.Billings
+        .OrderBy(n => n.ValuationDate)
+        .ThenBy(n => n.Id)
+        .Select(n => new ListBillingsOutput
+        {
+            Id = n.Id,
+            ValuationDate = new()
+            {
+                Year = n.ValuationDate.Year,
+                Month = n.ValuationDate.Month,
+                Day = n.ValuationDate.Day
+            },
+            Title = n.Title,
+            Amount = n.Amount,
+            Checked = n.Checked,
+            Comment = n.Comment,
+            IsArchived = n.IsArchived,
+            IsSaving = n.IsSaving
+        })
+        .ToArray();
 }
 
 public class ListBillingsInput
@@ -25,7 +42,6 @@ public class ListBillingsInput
 
 public class ListBillingsEvent
 {
-
 }
 
 public class ListBillingsOutput

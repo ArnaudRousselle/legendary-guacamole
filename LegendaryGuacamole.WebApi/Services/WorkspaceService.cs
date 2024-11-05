@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Security.Cryptography;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Queries;
 
@@ -52,16 +53,31 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         case AddBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case AddRepetitiveBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         case DeleteBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
+                        case DeleteRepetitiveBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case EditBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case EditRepetitiveBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         case GetBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case GetRepetitiveBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         case GetSummary q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
+                        case InsertNextBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case ListBillings q:
@@ -110,6 +126,31 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         };
     }
 
+    private AddRepetitiveBillingEvent Handle(AddRepetitiveBilling q)
+    {
+        var newId = Guid.NewGuid();
+
+        Models.RepetitiveBilling newRepetitiveBilling = new()
+        {
+            Id = newId,
+            NextValuationDate = q.Input.NextValuationDate.ToDateOnly(),
+            Title = q.Input.Title,
+            Amount = q.Input.Amount,
+            IsSaving = q.Input.IsSaving,
+            Frequence = q.Input.Frequence
+        };
+
+        workspace = workspace with
+        {
+            RepetitiveBillings = workspace.RepetitiveBillings.Add(newRepetitiveBilling)
+        };
+
+        return new()
+        {
+            RepetitiveBilling = newRepetitiveBilling
+        };
+    }
+
     private DeleteBillingEvent Handle(DeleteBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
@@ -120,6 +161,21 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         workspace = workspace with
         {
             Billings = workspace.Billings.RemoveAt(index)
+        };
+
+        return new();
+    }
+
+    private DeleteRepetitiveBillingEvent Handle(DeleteRepetitiveBilling q)
+    {
+        var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
+
+        if (index < 0)
+            throw new Exception("repetitive billing not found");
+
+        workspace = workspace with
+        {
+            RepetitiveBillings = workspace.RepetitiveBillings.RemoveAt(index)
         };
 
         return new();
@@ -156,6 +212,35 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         };
     }
 
+    private EditRepetitiveBillingEvent Handle(EditRepetitiveBilling q)
+    {
+        var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
+
+        if (index < 0)
+            throw new Exception("repetitive billing not found");
+
+        var repetitiveBilling = workspace.RepetitiveBillings[index] with
+        {
+            NextValuationDate = q.Input.NextValuationDate.ToDateOnly(),
+            Title = q.Input.Title,
+            Amount = q.Input.Amount,
+            IsSaving = q.Input.IsSaving,
+            Frequence = q.Input.Frequence
+        };
+
+        workspace = workspace with
+        {
+            RepetitiveBillings = workspace.RepetitiveBillings
+                .RemoveAt(index)
+                .Insert(index, repetitiveBilling)
+        };
+
+        return new()
+        {
+            RepetitiveBilling = repetitiveBilling
+        };
+    }
+
     private GetBillingEvent Handle(GetBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
@@ -169,9 +254,72 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         };
     }
 
+    private GetRepetitiveBillingEvent Handle(GetRepetitiveBilling q)
+    {
+        var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
+
+        if (index < 0)
+            throw new Exception("repetitive billing not found");
+
+        return new()
+        {
+            RepetitiveBilling = workspace.RepetitiveBillings[index]
+        };
+    }
+
     private GetSummaryEvent Handle(GetSummary q)
     {
         return new();
+    }
+
+    private InsertNextBillingEvent Handle(InsertNextBilling q)
+    {
+        var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
+
+        if (index < 0)
+            throw new Exception("repetitive billing not found");
+
+        var repetitiveBilling = workspace.RepetitiveBillings[index];
+
+        var newId = Guid.NewGuid();
+
+        Models.Billing newBilling = new()
+        {
+            Id = newId,
+            Amount = repetitiveBilling.Amount,
+            Checked = false,
+            Comment = null,
+            IsArchived = false,
+            IsSaving = repetitiveBilling.IsSaving,
+            Title = repetitiveBilling.Title,
+            ValuationDate = repetitiveBilling.NextValuationDate
+        };
+
+        var editedRepetitiveBilling = repetitiveBilling with
+        {
+            NextValuationDate = repetitiveBilling.Frequence switch
+            {
+                Models.Frequence.Monthly => repetitiveBilling.NextValuationDate.AddMonths(1),
+                Models.Frequence.Bimonthly => repetitiveBilling.NextValuationDate.AddMonths(2),
+                Models.Frequence.Quaterly => repetitiveBilling.NextValuationDate.AddMonths(3),
+                Models.Frequence.Annual => repetitiveBilling.NextValuationDate.AddMonths(12),
+                _ => throw new NotImplementedException()
+            },
+        };
+
+        workspace = workspace with
+        {
+            Billings = workspace.Billings.Add(newBilling),
+            RepetitiveBillings = workspace.RepetitiveBillings
+                .RemoveAt(index)
+                .Insert(index, repetitiveBilling),
+        };
+
+        return new InsertNextBillingEvent
+        {
+            Billing = newBilling,
+            RepetitiveBilling = editedRepetitiveBilling
+        };
     }
 
     private ListBillingsEvent Handle(ListBillings q)
@@ -211,168 +359,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         Workspace = workspace,
         Result = result
     };
-
-    // public AddBilling.Output Handle(AddBilling.Input input)
-    // {
-    //     var newId = Guid.NewGuid();
-
-    //     Models.Billing b = new()
-    //     {
-    //         Id = newId,
-    //         Amount = input.Amount,
-    //         Checked = input.Checked,
-    //         Comment = input.Comment,
-    //         IsArchived = input.IsArchived,
-    //         IsSaving = input.IsSaving,
-    //         Title = input.Title,
-    //         ValuationDate = input.ValuationDate.ToDateOnly()
-    //     };
-
-    //     billings.Add(b);
-
-    //     return new AddBilling.Output
-    //     {
-    //         Id = b.Id,
-    //         ValuationDate = new()
-    //         {
-    //             Year = b.ValuationDate.Year,
-    //             Month = b.ValuationDate.Month,
-    //             Day = b.ValuationDate.Day
-    //         },
-    //         Title = b.Title,
-    //         Amount = b.Amount,
-    //         Checked = b.Checked,
-    //         Comment = b.Comment,
-    //         IsArchived = b.IsArchived,
-    //         IsSaving = b.IsSaving
-    //     };
-    // }
-
-    // public DeleteBilling.Output Handle(DeleteBilling.Input input)
-    // {
-    //     var billing = billings.SingleOrDefault(b => b.Id == input.Id);
-
-    //     if (billing == null)
-    //         throw new Exception("billing not found");
-
-    //     billings.Remove(billing);
-
-    //     return new() { HasBeenDeleted = false };
-    // }
-
-    // public EditBilling.Output Handle(EditBilling.Input input)
-    // {
-    //     var b = billings.SingleOrDefault(b => b.Id == input.Id);
-
-    //     if (b == null)
-    //         throw new Exception("billing not found");
-
-    //     b.Amount = input.Amount;
-    //     b.Checked = input.Checked;
-    //     b.Comment = input.Comment;
-    //     b.IsArchived = input.IsArchived;
-    //     b.IsSaving = input.IsSaving;
-    //     b.Title = input.Title;
-    //     b.ValuationDate = input.ValuationDate.ToDateOnly();
-
-    //     return new()
-    //     {
-    //         Id = b.Id,
-    //         ValuationDate = new()
-    //         {
-    //             Year = b.ValuationDate.Year,
-    //             Month = b.ValuationDate.Month,
-    //             Day = b.ValuationDate.Day
-    //         },
-    //         Title = b.Title,
-    //         Amount = b.Amount,
-    //         Checked = b.Checked,
-    //         Comment = b.Comment,
-    //         IsArchived = b.IsArchived,
-    //         IsSaving = b.IsSaving
-    //     };
-    // }
-
-    // public GetBilling.Output Handle(GetBilling.Input input)
-    // {
-    //     var b = billings.Single(b => b.Id == input.Id);
-    //     return new()
-    //     {
-    //         Id = b.Id,
-    //         ValuationDate = new()
-    //         {
-    //             Year = b.ValuationDate.Year,
-    //             Month = b.ValuationDate.Month,
-    //             Day = b.ValuationDate.Day
-    //         },
-    //         Title = b.Title,
-    //         Amount = b.Amount,
-    //         Checked = b.Checked,
-    //         Comment = b.Comment,
-    //         IsArchived = b.IsArchived,
-    //         IsSaving = b.IsSaving
-    //     };
-    // }
-
-    // public GetSummary.Output[] Handle(GetSummary.Input input)
-    //     => billings.Select(b => new GetSummary.Output()
-    //     {
-    //         ValuationDate = b.ValuationDate,
-    //         Amount = b.Amount
-    //     }).ToArray();
-
-    // public ListBillings.Output[] Handle(ListBillings.Input input)
-    // {
-    //     var query = billings.AsQueryable();
-
-    //     if (!string.IsNullOrEmpty(input.Title))
-    //         query = query.Where(n => n.Title.ToLower().Contains(input.Title.ToLower()));
-    //     if (input.Amount.HasValue)
-    //         query = query.Where(n => input.Amount - (input.DeltaAmount ?? 0) <= n.Amount
-    //             && n.Amount <= input.Amount + (input.DeltaAmount ?? 0));
-    //     if (input.StartDate != null)
-    //         query = query.Where(n => input.StartDate.ToDateOnly() <= n.ValuationDate);
-    //     if (input.EndDate != null)
-    //         query = query.Where(n => n.ValuationDate <= input.EndDate.ToDateOnly());
-    //     if (!(input.WithArchived ?? false))
-    //         query = query.Where(n => !n.IsArchived);
-
-    //     return billings
-    //         .Select(b => new ListBillings.Output
-    //         {
-    //             Id = b.Id,
-    //             ValuationDate = new()
-    //             {
-    //                 Year = b.ValuationDate.Year,
-    //                 Month = b.ValuationDate.Month,
-    //                 Day = b.ValuationDate.Day
-    //             },
-    //             Title = b.Title,
-    //             Amount = b.Amount,
-    //             Checked = b.Checked,
-    //             Comment = b.Comment,
-    //             IsArchived = b.IsArchived,
-    //             IsSaving = b.IsSaving
-    //         })
-    //         .ToArray();
-    // }
-
-    // private SetChecked.Output Handle(SetChecked.Input input)
-    // {
-    //     var b = billings.SingleOrDefault(b => b.Id == input.Id);
-
-    //     if (b == null)
-    //         throw new Exception("billing not found");
-
-    //     b.Checked = input.Checked;
-
-    //     return new()
-    //     {
-    //         Id = b.Id,
-    //         Checked = b.Checked
-    //     };
-    // }
-
 }
 
 public static class ImmutableArrayExtensions

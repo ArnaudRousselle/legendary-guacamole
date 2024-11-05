@@ -13,7 +13,7 @@ public class DeleteBilling : WorkspaceQuery<DeleteBillingInput, DeleteBillingEve
 public class DeleteBillingInput
 {
     [Required]
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 }
 
 public class DeleteBillingEvent

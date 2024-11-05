@@ -29,7 +29,7 @@ public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingEvent, GetBi
 public class GetBillingInput
 {
     [Required]
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 }
 
 public class GetBillingEvent

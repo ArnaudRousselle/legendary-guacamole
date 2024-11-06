@@ -7,14 +7,14 @@ interface IProps {
 }
 
 export const CheckedCheckbox = ({ billingId, checked }: IProps) => {
-  const { mutate: onChange, isPending } = useSetCheckedQuery(billingId);
+  const { mutate: onChange, isPending } = useSetCheckedQuery();
   return (
     <>
       <Checkbox
         disabled={isPending}
         size="small"
         checked={checked}
-        onChange={() => onChange(!checked)}
+        onChange={() => onChange({ id: billingId, checked: !checked })}
       />
       {
         <CircularProgress

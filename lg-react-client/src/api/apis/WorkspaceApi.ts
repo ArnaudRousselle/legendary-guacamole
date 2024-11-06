@@ -17,12 +17,21 @@ import * as runtime from '../runtime';
 import type {
   AddBillingInput,
   AddBillingOutput,
+  AddRepetitiveBillingInput,
+  AddRepetitiveBillingOutput,
   DeleteBillingInput,
+  DeleteRepetitiveBillingInput,
   EditBillingInput,
   EditBillingOutput,
+  EditRepetitiveBillingInput,
+  EditRepetitiveBillingOutput,
   GetBillingInput,
   GetBillingOutput,
+  GetRepetitiveBillingInput,
+  GetRepetitiveBillingOutput,
   GetSummaryOutput,
+  InsertNextBillingInput,
+  InsertNextBillingOutput,
   ListBillingsInput,
   ListBillingsOutput,
   SetCheckedInput,
@@ -33,18 +42,36 @@ import {
     AddBillingInputToJSON,
     AddBillingOutputFromJSON,
     AddBillingOutputToJSON,
+    AddRepetitiveBillingInputFromJSON,
+    AddRepetitiveBillingInputToJSON,
+    AddRepetitiveBillingOutputFromJSON,
+    AddRepetitiveBillingOutputToJSON,
     DeleteBillingInputFromJSON,
     DeleteBillingInputToJSON,
+    DeleteRepetitiveBillingInputFromJSON,
+    DeleteRepetitiveBillingInputToJSON,
     EditBillingInputFromJSON,
     EditBillingInputToJSON,
     EditBillingOutputFromJSON,
     EditBillingOutputToJSON,
+    EditRepetitiveBillingInputFromJSON,
+    EditRepetitiveBillingInputToJSON,
+    EditRepetitiveBillingOutputFromJSON,
+    EditRepetitiveBillingOutputToJSON,
     GetBillingInputFromJSON,
     GetBillingInputToJSON,
     GetBillingOutputFromJSON,
     GetBillingOutputToJSON,
+    GetRepetitiveBillingInputFromJSON,
+    GetRepetitiveBillingInputToJSON,
+    GetRepetitiveBillingOutputFromJSON,
+    GetRepetitiveBillingOutputToJSON,
     GetSummaryOutputFromJSON,
     GetSummaryOutputToJSON,
+    InsertNextBillingInputFromJSON,
+    InsertNextBillingInputToJSON,
+    InsertNextBillingOutputFromJSON,
+    InsertNextBillingOutputToJSON,
     ListBillingsInputFromJSON,
     ListBillingsInputToJSON,
     ListBillingsOutputFromJSON,
@@ -59,20 +86,40 @@ export interface AddBillingRequest {
     addBillingInput: AddBillingInput;
 }
 
+export interface AddRepetitiveBillingRequest {
+    addRepetitiveBillingInput: AddRepetitiveBillingInput;
+}
+
 export interface DeleteBillingRequest {
     deleteBillingInput: DeleteBillingInput;
+}
+
+export interface DeleteRepetitiveBillingRequest {
+    deleteRepetitiveBillingInput: DeleteRepetitiveBillingInput;
 }
 
 export interface EditBillingRequest {
     editBillingInput: EditBillingInput;
 }
 
+export interface EditRepetitiveBillingRequest {
+    editRepetitiveBillingInput: EditRepetitiveBillingInput;
+}
+
 export interface GetBillingRequest {
     getBillingInput: GetBillingInput;
 }
 
+export interface GetRepetitiveBillingRequest {
+    getRepetitiveBillingInput: GetRepetitiveBillingInput;
+}
+
 export interface GetSummaryRequest {
     body: object;
+}
+
+export interface InsertNextBillingRequest {
+    insertNextBillingInput: InsertNextBillingInput;
 }
 
 export interface ListBillingsRequest {
@@ -124,6 +171,40 @@ export class WorkspaceApi extends runtime.BaseAPI {
 
     /**
      */
+    async addRepetitiveBillingRaw(requestParameters: AddRepetitiveBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AddRepetitiveBillingOutput>> {
+        if (requestParameters['addRepetitiveBillingInput'] == null) {
+            throw new runtime.RequiredError(
+                'addRepetitiveBillingInput',
+                'Required parameter "addRepetitiveBillingInput" was null or undefined when calling addRepetitiveBilling().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/addRepetitiveBilling`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: AddRepetitiveBillingInputToJSON(requestParameters['addRepetitiveBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => AddRepetitiveBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async addRepetitiveBilling(addRepetitiveBillingInput: AddRepetitiveBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AddRepetitiveBillingOutput> {
+        const response = await this.addRepetitiveBillingRaw({ addRepetitiveBillingInput: addRepetitiveBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async deleteBillingRaw(requestParameters: DeleteBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['deleteBillingInput'] == null) {
             throw new runtime.RequiredError(
@@ -153,6 +234,40 @@ export class WorkspaceApi extends runtime.BaseAPI {
      */
     async deleteBilling(deleteBillingInput: DeleteBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.deleteBillingRaw({ deleteBillingInput: deleteBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async deleteRepetitiveBillingRaw(requestParameters: DeleteRepetitiveBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters['deleteRepetitiveBillingInput'] == null) {
+            throw new runtime.RequiredError(
+                'deleteRepetitiveBillingInput',
+                'Required parameter "deleteRepetitiveBillingInput" was null or undefined when calling deleteRepetitiveBilling().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/deleteRepetitiveBilling`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: DeleteRepetitiveBillingInputToJSON(requestParameters['deleteRepetitiveBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     */
+    async deleteRepetitiveBilling(deleteRepetitiveBillingInput: DeleteRepetitiveBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.deleteRepetitiveBillingRaw({ deleteRepetitiveBillingInput: deleteRepetitiveBillingInput }, initOverrides);
         return await response.value();
     }
 
@@ -192,6 +307,40 @@ export class WorkspaceApi extends runtime.BaseAPI {
 
     /**
      */
+    async editRepetitiveBillingRaw(requestParameters: EditRepetitiveBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<EditRepetitiveBillingOutput>> {
+        if (requestParameters['editRepetitiveBillingInput'] == null) {
+            throw new runtime.RequiredError(
+                'editRepetitiveBillingInput',
+                'Required parameter "editRepetitiveBillingInput" was null or undefined when calling editRepetitiveBilling().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/editRepetitiveBilling`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditRepetitiveBillingInputToJSON(requestParameters['editRepetitiveBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EditRepetitiveBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async editRepetitiveBilling(editRepetitiveBillingInput: EditRepetitiveBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EditRepetitiveBillingOutput> {
+        const response = await this.editRepetitiveBillingRaw({ editRepetitiveBillingInput: editRepetitiveBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async getBillingRaw(requestParameters: GetBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetBillingOutput>> {
         if (requestParameters['getBillingInput'] == null) {
             throw new runtime.RequiredError(
@@ -226,6 +375,40 @@ export class WorkspaceApi extends runtime.BaseAPI {
 
     /**
      */
+    async getRepetitiveBillingRaw(requestParameters: GetRepetitiveBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetRepetitiveBillingOutput>> {
+        if (requestParameters['getRepetitiveBillingInput'] == null) {
+            throw new runtime.RequiredError(
+                'getRepetitiveBillingInput',
+                'Required parameter "getRepetitiveBillingInput" was null or undefined when calling getRepetitiveBilling().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/getRepetitiveBilling`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GetRepetitiveBillingInputToJSON(requestParameters['getRepetitiveBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetRepetitiveBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getRepetitiveBilling(getRepetitiveBillingInput: GetRepetitiveBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetRepetitiveBillingOutput> {
+        const response = await this.getRepetitiveBillingRaw({ getRepetitiveBillingInput: getRepetitiveBillingInput }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async getSummaryRaw(requestParameters: GetSummaryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetSummaryOutput>> {
         if (requestParameters['body'] == null) {
             throw new runtime.RequiredError(
@@ -255,6 +438,40 @@ export class WorkspaceApi extends runtime.BaseAPI {
      */
     async getSummary(body: object, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetSummaryOutput> {
         const response = await this.getSummaryRaw({ body: body }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async insertNextBillingRaw(requestParameters: InsertNextBillingRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InsertNextBillingOutput>> {
+        if (requestParameters['insertNextBillingInput'] == null) {
+            throw new runtime.RequiredError(
+                'insertNextBillingInput',
+                'Required parameter "insertNextBillingInput" was null or undefined when calling insertNextBilling().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/insertNextBilling`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: InsertNextBillingInputToJSON(requestParameters['insertNextBillingInput']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => InsertNextBillingOutputFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async insertNextBilling(insertNextBillingInput: InsertNextBillingInput, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InsertNextBillingOutput> {
+        const response = await this.insertNextBillingRaw({ insertNextBillingInput: insertNextBillingInput }, initOverrides);
         return await response.value();
     }
 

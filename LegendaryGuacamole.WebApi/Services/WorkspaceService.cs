@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Security.Cryptography;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Queries;
 

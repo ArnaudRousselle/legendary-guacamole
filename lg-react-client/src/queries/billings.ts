@@ -7,8 +7,11 @@ import {
 import { useApi } from "../contexts";
 import {
   AddBillingInput,
+  AddBillingOutput,
   DeleteBillingInput,
   EditBillingInput,
+  EditBillingOutput,
+  ListBillingsOutput,
   SetCheckedInput,
 } from "../api";
 import { PromiseReturnType } from "../utils/PromiseReturnType";
@@ -17,11 +20,14 @@ const billingsListingQueryKey: QueryKey = ["billingsListing"];
 const getBillingQueryKey: QueryKey = ["getBilling"];
 const billingsAmountSummaryQueryKey: QueryKey = ["billingsAmountSummary"];
 
-export function useListBillingsQuery() {
+export function useListBillingsQuery<
+  T = PromiseReturnType<typeof workspaceApi.listBillings>
+>(select?: (res: Array<ListBillingsOutput>) => T) {
   const { workspaceApi } = useApi();
   return useQuery({
     queryKey: billingsListingQueryKey,
     queryFn: async () => await workspaceApi.listBillings({}),
+    select,
   });
 }
 
@@ -41,7 +47,9 @@ export function useGetSummaryQuery() {
   });
 }
 
-export function useAddBillingQuery() {
+export function useAddBillingQuery(
+  onSuccess?: (res: AddBillingOutput) => void
+) {
   const { workspaceApi } = useApi();
   const queryClient = useQueryClient();
   return useMutation({
@@ -57,11 +65,14 @@ export function useAddBillingQuery() {
       queryClient.invalidateQueries({
         queryKey: billingsAmountSummaryQueryKey,
       });
+      if (onSuccess) onSuccess(res);
     },
   });
 }
 
-export function useEditBillingQuery() {
+export function useEditBillingQuery(
+  onSuccess?: (res: EditBillingOutput) => void
+) {
   const { workspaceApi } = useApi();
   const queryClient = useQueryClient();
   return useMutation({
@@ -80,11 +91,12 @@ export function useEditBillingQuery() {
       queryClient.invalidateQueries({
         queryKey: billingsAmountSummaryQueryKey,
       });
+      if (onSuccess) onSuccess(res);
     },
   });
 }
 
-export function useDeleteBillingQuery() {
+export function useDeleteBillingQuery(onSuccess?: () => void) {
   const { workspaceApi } = useApi();
   const queryClient = useQueryClient();
   return useMutation({
@@ -105,6 +117,7 @@ export function useDeleteBillingQuery() {
       queryClient.invalidateQueries({
         queryKey: billingsAmountSummaryQueryKey,
       });
+      if (onSuccess) onSuccess();
     },
   });
 }

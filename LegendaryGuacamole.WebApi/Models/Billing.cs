@@ -8,6 +8,5 @@ public record Billing
     public required decimal Amount { get; init; }
     public required bool Checked { get; init; }
     public required string? Comment { get; init; }
-    public required bool IsArchived { get; init; }
     public required bool IsSaving { get; init; }
 }

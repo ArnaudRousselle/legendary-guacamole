@@ -33,7 +33,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                     Title = "Mon titre " + i,
                     Comment = i % 3 == 0 ? "mon commentaire " + i : null,
                     ValuationDate = new DateOnly(2024, 10, 12),
-                    IsArchived = false,
                     IsSaving = false
                 })
             };
@@ -108,7 +107,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             Amount = q.Input.Amount,
             Checked = q.Input.Checked,
             Comment = q.Input.Comment,
-            IsArchived = q.Input.IsArchived,
             IsSaving = q.Input.IsSaving,
             Title = q.Input.Title,
             ValuationDate = q.Input.ValuationDate.ToDateOnly()
@@ -192,7 +190,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             Amount = q.Input.Amount,
             Checked = q.Input.Checked,
             Comment = q.Input.Comment,
-            IsArchived = q.Input.IsArchived,
             IsSaving = q.Input.IsSaving,
             Title = q.Input.Title,
             ValuationDate = q.Input.ValuationDate.ToDateOnly(),
@@ -288,7 +285,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             Amount = repetitiveBilling.Amount,
             Checked = false,
             Comment = null,
-            IsArchived = false,
             IsSaving = repetitiveBilling.IsSaving,
             Title = repetitiveBilling.Title,
             ValuationDate = repetitiveBilling.NextValuationDate
@@ -321,7 +317,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         };
     }
 
-    private ListBillingsEvent Handle(ListBillings q)
+    private ListBillingsEvent Handle(ListBillings _)
     {
         return new();
     }

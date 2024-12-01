@@ -67,12 +67,6 @@ export interface EditBillingOutput {
      * @type {boolean}
      * @memberof EditBillingOutput
      */
-    isArchived: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof EditBillingOutput
-     */
     isSaving: boolean;
 }
 
@@ -85,7 +79,6 @@ export function instanceOfEditBillingOutput(value: object): value is EditBilling
     if (!('title' in value) || value['title'] === undefined) return false;
     if (!('amount' in value) || value['amount'] === undefined) return false;
     if (!('checked' in value) || value['checked'] === undefined) return false;
-    if (!('isArchived' in value) || value['isArchived'] === undefined) return false;
     if (!('isSaving' in value) || value['isSaving'] === undefined) return false;
     return true;
 }
@@ -106,7 +99,6 @@ export function EditBillingOutputFromJSONTyped(json: any, ignoreDiscriminator: b
         'amount': json['amount'],
         'checked': json['checked'],
         'comment': json['comment'] == null ? undefined : json['comment'],
-        'isArchived': json['isArchived'],
         'isSaving': json['isSaving'],
     };
 }
@@ -123,7 +115,6 @@ export function EditBillingOutputToJSON(value?: EditBillingOutput | null): any {
         'amount': value['amount'],
         'checked': value['checked'],
         'comment': value['comment'],
-        'isArchived': value['isArchived'],
         'isSaving': value['isSaving'],
     };
 }

@@ -9,6 +9,20 @@ public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent,
 {
     public override ListBillingsOutput[] Map(Workspace workspace, ListBillingsEvent evt)
     => workspace.Billings
+        .Where(b =>
+        {
+            if (!(Input.WithChecked ?? false) && b.Checked)
+                return false;
+            if (Input.StartDate != null && b.ValuationDate < new DateOnly(Input.StartDate.Year, Input.StartDate.Month, Input.StartDate.Day))
+                return false;
+            if (Input.EndDate != null && b.ValuationDate > new DateOnly(Input.EndDate.Year, Input.EndDate.Month, Input.EndDate.Day))
+                return false;
+            if (Input.Amount.HasValue && (Math.Abs(b.Amount - Input.Amount.Value) >= (Input.DeltaAmount ?? 0) + 0.001m))
+                return false;
+            if (!string.IsNullOrEmpty(Input.Title) && b.Title.IndexOf(Input.Title, StringComparison.CurrentCultureIgnoreCase) < 0)
+                return false;
+            return true;
+        })
         .OrderBy(n => n.ValuationDate)
         .ThenBy(n => n.Id)
         .Select(n => new ListBillingsOutput
@@ -24,7 +38,6 @@ public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent,
             Amount = n.Amount,
             Checked = n.Checked,
             Comment = n.Comment,
-            IsArchived = n.IsArchived,
             IsSaving = n.IsSaving
         })
         .ToArray();
@@ -37,7 +50,7 @@ public class ListBillingsInput
     public decimal? Amount { get; set; }
     public decimal? DeltaAmount { get; set; }
     public string? Title { get; set; }
-    public bool? WithArchived { get; set; }
+    public bool? WithChecked { get; set; }
 }
 
 public class ListBillingsEvent
@@ -57,8 +70,6 @@ public class ListBillingsOutput
     [Required]
     public required bool Checked { get; set; }
     public required string? Comment { get; set; }
-    [Required]
-    public required bool IsArchived { get; set; }
     [Required]
     public required bool IsSaving { get; set; }
 }

@@ -36,7 +36,6 @@ export const BillingPopup = ({ args, onClose }: IProps) => {
             addBilling({
               amount: 666,
               checked: false,
-              isArchived: false,
               isSaving: false,
               title: "test React",
               valuationDate: {
@@ -63,7 +62,6 @@ export const BillingPopup = ({ args, onClose }: IProps) => {
               id: args.billingId,
               amount: 666,
               checked: false,
-              isArchived: false,
               isSaving: false,
               title: "test React",
               valuationDate: {

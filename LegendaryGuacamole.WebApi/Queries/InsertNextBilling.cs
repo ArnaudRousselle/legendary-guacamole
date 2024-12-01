@@ -25,7 +25,6 @@ public class InsertNextBilling : WorkspaceQuery<InsertNextBillingInput, InsertNe
             Amount = evt.Billing.Amount,
             Checked = evt.Billing.Checked,
             Comment = evt.Billing.Comment,
-            IsArchived = evt.Billing.IsArchived,
             IsSaving = evt.Billing.IsSaving
         },
         RepetitiveBilling = new()
@@ -80,8 +79,6 @@ public class InsertNextBillingOutputBilling
     [Required]
     public required bool Checked { get; set; }
     public required string? Comment { get; set; }
-    [Required]
-    public required bool IsArchived { get; set; }
     [Required]
     public required bool IsSaving { get; set; }
 }

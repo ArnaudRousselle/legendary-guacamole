@@ -61,7 +61,7 @@ export interface ListBillingsInput {
      * @type {boolean}
      * @memberof ListBillingsInput
      */
-    withArchived?: boolean | null;
+    withChecked?: boolean | null;
 }
 
 /**
@@ -86,7 +86,7 @@ export function ListBillingsInputFromJSONTyped(json: any, ignoreDiscriminator: b
         'amount': json['amount'] == null ? undefined : json['amount'],
         'deltaAmount': json['deltaAmount'] == null ? undefined : json['deltaAmount'],
         'title': json['title'] == null ? undefined : json['title'],
-        'withArchived': json['withArchived'] == null ? undefined : json['withArchived'],
+        'withChecked': json['withChecked'] == null ? undefined : json['withChecked'],
     };
 }
 
@@ -101,7 +101,7 @@ export function ListBillingsInputToJSON(value?: ListBillingsInput | null): any {
         'amount': value['amount'],
         'deltaAmount': value['deltaAmount'],
         'title': value['title'],
-        'withArchived': value['withArchived'],
+        'withChecked': value['withChecked'],
     };
 }
 

@@ -21,7 +21,6 @@ public class AddBilling : WorkspaceQuery<AddBillingInput, AddBillingEvent, AddBi
         Amount = evt.Billing.Amount,
         Checked = evt.Billing.Checked,
         Comment = evt.Billing.Comment,
-        IsArchived = evt.Billing.IsArchived,
         IsSaving = evt.Billing.IsSaving
     };
 }
@@ -37,8 +36,6 @@ public class AddBillingInput
     [Required]
     public bool Checked { get; set; }
     public string? Comment { get; set; }
-    [Required]
-    public bool IsArchived { get; set; }
     [Required]
     public bool IsSaving { get; set; }
 }
@@ -61,8 +58,6 @@ public class AddBillingOutput
     [Required]
     public required bool Checked { get; set; }
     public required string? Comment { get; set; }
-    [Required]
-    public required bool IsArchived { get; set; }
     [Required]
     public required bool IsSaving { get; set; }
 }

@@ -1,23 +1,11 @@
-import {
-  CircularProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tooltip,
-} from "@mui/material";
-import { formatShortDate } from "../../../utils/formatShortDate";
-import InfoIcon from "@mui/icons-material/Info";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { CheckedCheckbox } from "./CheckedCheckbox";
 import { useListBillingsQuery } from "../../../queries/billings";
 import { DropDownButton } from "../../design/DropDownButton";
 import { useState } from "react";
 import { BillingPopupArgs } from "./types";
 import { BillingPopup } from "./BillingPopup";
+import { Classes, Icon, Spinner, Tooltip } from "@blueprintjs/core";
+import { formatShortDate } from "../../../utils/formatShortDate";
 
 export const BillingsListing = () => {
   const { isFetching, data: billings = [] } = useListBillingsQuery((res) =>
@@ -39,26 +27,28 @@ export const BillingsListing = () => {
 
   const [popupArgs, setPopupArgs] = useState<BillingPopupArgs | null>(null);
 
-  if (isFetching) return <CircularProgress />;
+  if (isFetching) return <Spinner />;
+
+  //todo ARNAUD: voir pour faire un stickyHeader
 
   return (
     <>
-      <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="billings table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center"></TableCell>
-              <TableCell>Titre</TableCell>
-              <TableCell align="center">Date de valeur</TableCell>
-              <TableCell align="right">Montant</TableCell>
-              <TableCell align="center">Commentaire</TableCell>
-              <TableCell align="center">Pointé</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <div style={{ maxHeight: 440 }}>
+        <table>
+          <thead>
+            <tr>
+              <th align="center"></th>
+              <th>Titre</th>
+              <th align="center">Date de valeur</th>
+              <th align="right">Montant</th>
+              <th align="center">Commentaire</th>
+              <th align="center">Pointé</th>
+            </tr>
+          </thead>
+          <tbody>
             {billings.map((b) => (
-              <TableRow key={b.id}>
-                <TableCell align="center">
+              <tr key={b.id}>
+                <td align="center">
                   <DropDownButton
                     icon={<MoreVertIcon />}
                     actions={[
@@ -74,27 +64,28 @@ export const BillingsListing = () => {
                       },
                     ]}
                   />
-                </TableCell>
-                <TableCell>{b.title}</TableCell>
-                <TableCell align="center">
-                  {formatShortDate(b.valuationDate)}
-                </TableCell>
-                <TableCell align="right">{b.amount.toFixed(2)}</TableCell>
-                <TableCell align="center">
+                </td>
+                <td>{b.title}</td>
+                <td align="center">{formatShortDate(b.valuationDate)}</td>
+                <td align="right">{b.amount.toFixed(2)}</td>
+                <td align="center">
                   {b.comment ? (
-                    <Tooltip title={b.comment}>
-                      <InfoIcon fontSize="small" />
+                    <Tooltip
+                      className={Classes.TOOLTIP_INDICATOR}
+                      content={b.comment}
+                    >
+                      <Icon icon="info-sign" />
                     </Tooltip>
                   ) : null}
-                </TableCell>
-                <TableCell align="center">
+                </td>
+                <td align="center">
                   <CheckedCheckbox billingId={b.id} checked={b.checked} />
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </div>
       {popupArgs && (
         <BillingPopup onClose={() => setPopupArgs(null)} args={popupArgs} />
       )}

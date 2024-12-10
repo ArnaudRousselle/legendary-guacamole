@@ -1,4 +1,3 @@
-import { Checkbox } from "@mui/material";
 import {
   Control,
   FieldPathByValue,
@@ -7,6 +6,7 @@ import {
   UseControllerProps,
 } from "react-hook-form";
 import { ErrorMessage } from "./ErrorMessage";
+import { Checkbox } from "@blueprintjs/core";
 
 interface IProps<
   TFieldValues extends FieldValues = FieldValues,

@@ -1,4 +1,3 @@
-import { Alert } from "@mui/material";
 import { ControllerFieldState, FieldError } from "react-hook-form";
 
 interface IProps {
@@ -7,7 +6,7 @@ interface IProps {
 
 export const ErrorMessage = ({ fieldState: { error } }: IProps) => {
   if (!error) return null;
-  return <Alert severity="error">{getErrorMessage(error)}</Alert>;
+  return <p style={{ color: "red" }}>{getErrorMessage(error)}</p>;
 };
 
 function getErrorMessage(error: FieldError) {

@@ -1,42 +1,27 @@
-import { Box, Modal, Typography } from "@mui/material";
+import { Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
+import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
 import { PropsWithChildren, ReactNode } from "react";
 
 interface IProps extends PropsWithChildren {
   title: string;
+  icon?: BlueprintIcons_16Id;
   onClose: () => void;
-  width?: number;
   open?: boolean;
   footer?: ReactNode | undefined;
 }
 
 export const Popup = ({
   title,
+  icon,
   children,
   onClose,
-  width = 400,
   open = true,
   footer,
 }: IProps) => {
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width,
-          border: "2px solid #000",
-        }}
-        bgcolor="background.paper"
-        p={3}
-      >
-        <Typography variant="h6" component="h2" mb={2}>
-          {title}
-        </Typography>
-        {children}
-        {footer !== undefined && <Box textAlign="right">{footer}</Box>}
-      </Box>
-    </Modal>
+    <Dialog title={title} icon={icon} isOpen={open} onClose={onClose}>
+      <DialogBody>{children}</DialogBody>
+      {footer && <DialogFooter actions={footer} />}
+    </Dialog>
   );
 };

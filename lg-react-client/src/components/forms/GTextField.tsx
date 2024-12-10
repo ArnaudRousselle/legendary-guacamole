@@ -1,4 +1,3 @@
-import { TextField } from "@mui/material";
 import {
   Control,
   FieldPathByValue,
@@ -7,6 +6,7 @@ import {
   UseControllerProps,
 } from "react-hook-form";
 import { ErrorMessage } from "./ErrorMessage";
+import { Label } from "@blueprintjs/core";
 
 interface IProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -29,15 +29,15 @@ export const GTextField = <TFieldValues extends FieldValues = FieldValues>({
   });
 
   return (
-    <>
-      <TextField
-        label={label}
+    <Label>
+      {label}
+      <input
         type="text"
         value={field.value ?? ""}
         onChange={(evt) => field.onChange(evt.target.value)}
         onBlur={field.onBlur}
       />
       <ErrorMessage fieldState={fieldState} />
-    </>
+    </Label>
   );
 };

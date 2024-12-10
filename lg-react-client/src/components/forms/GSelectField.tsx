@@ -7,8 +7,8 @@ import {
   UseControllerProps,
 } from "react-hook-form";
 import { ErrorMessage } from "./ErrorMessage";
-import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { useEffect, useMemo } from "react";
+import { HTMLSelect } from "@blueprintjs/core";
 
 interface IProps<
   TItems extends FieldValues,
@@ -45,7 +45,7 @@ export const GSelectField = <
 
   const { onChange: setFieldValue } = field;
 
-  const handleChange = (evt: SelectChangeEvent) => {
+  const handleChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(evt.target.value);
     setFieldValue(evt.target.value);
   };
@@ -64,17 +64,17 @@ export const GSelectField = <
   return (
     <>
       {label}
-      <Select
+      <HTMLSelect
         value={field.value ?? ""}
         onChange={handleChange}
         onBlur={field.onBlur}
       >
         {data.map((item) => (
-          <MenuItem key={item[keyProps]} value={item[keyProps]}>
+          <option key={item[keyProps]} value={item[keyProps]}>
             {item[labelKey]}
-          </MenuItem>
+          </option>
         ))}
-      </Select>
+      </HTMLSelect>
       <button type="button" onClick={() => setFieldValue(null)}>
         X
       </button>

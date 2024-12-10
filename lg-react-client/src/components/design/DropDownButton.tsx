@@ -1,42 +1,56 @@
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { useRef, useState } from "react";
+import { Icon } from "@blueprintjs/core";
+import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated/16px/blueprint-icons-16";
+import { Fragment } from "react";
 
 interface IProps {
-  icon: JSX.Element;
+  icon?: BlueprintIcons_16Id;
   actions: Array<{ text: string; onClick: () => void }>;
 }
 
 export const DropDownButton = ({ icon, actions }: IProps) => {
-  const anchor = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState(false);
+  //todo ARNAUD: à refaire
   return (
     <>
-      <IconButton ref={anchor} onClick={() => setOpen((p) => !p)}>
-        {icon}
-      </IconButton>
-      {open && (
-        <Menu
-          id="basic-menu"
-          anchorEl={anchor.current}
-          open
-          onClose={() => setOpen(false)}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-        >
-          {actions.map((a, i) => (
-            <MenuItem
-              key={i}
-              onClick={() => {
-                a.onClick();
-                setOpen(false);
-              }}
-            >
-              {a.text}
-            </MenuItem>
-          ))}
-        </Menu>
-      )}
+      {actions.map((a, i) => (
+        <Fragment>
+          {icon && <Icon icon={icon} />}
+          <button key={i} type="button" onClick={a.onClick}>
+            {a.text}
+          </button>
+        </Fragment>
+      ))}
     </>
   );
+  // const anchor = useRef<HTMLButtonElement>(null);
+  // const [open, setOpen] = useState(false);
+  // return (
+  //   <>
+  //     <IconButton ref={anchor} onClick={() => setOpen((p) => !p)}>
+  //       {icon}
+  //     </IconButton>
+  //     {open && (
+  //       <Menu
+  //         id="basic-menu"
+  //         anchorEl={anchor.current}
+  //         open
+  //         onClose={() => setOpen(false)}
+  //         MenuListProps={{
+  //           "aria-labelledby": "basic-button",
+  //         }}
+  //       >
+  //         {actions.map((a, i) => (
+  //           <MenuItem
+  //             key={i}
+  //             onClick={() => {
+  //               a.onClick();
+  //               setOpen(false);
+  //             }}
+  //           >
+  //             {a.text}
+  //           </MenuItem>
+  //         ))}
+  //       </Menu>
+  //     )}
+  //   </>
+  // );
 };

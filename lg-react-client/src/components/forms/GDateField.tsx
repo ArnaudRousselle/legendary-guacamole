@@ -1,4 +1,3 @@
-import { TextField } from "@mui/material";
 import {
   Control,
   FieldPathByValue,
@@ -7,6 +6,7 @@ import {
   UseControllerProps,
 } from "react-hook-form";
 import { ErrorMessage } from "./ErrorMessage";
+import { Label } from "@blueprintjs/core";
 
 interface IProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -62,9 +62,9 @@ export const GDateField = <TFieldValues extends FieldValues = FieldValues>({
   };
 
   return (
-    <>
+    <Label>
       {label}
-      <TextField
+      <input
         type="date"
         value={formatToDateString(field.value)}
         onChange={onChange}
@@ -74,6 +74,6 @@ export const GDateField = <TFieldValues extends FieldValues = FieldValues>({
         X
       </button>
       <ErrorMessage fieldState={fieldState} />
-    </>
+    </Label>
   );
 };

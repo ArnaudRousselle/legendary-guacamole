@@ -1,4 +1,3 @@
-import { TextField } from "@mui/material";
 import {
   Control,
   FieldPathByValue,
@@ -8,6 +7,7 @@ import {
 } from "react-hook-form";
 import { ErrorMessage } from "./ErrorMessage";
 import { useState } from "react";
+import { Label } from "@blueprintjs/core";
 
 interface IProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -41,9 +41,9 @@ export const GNumericField = <TFieldValues extends FieldValues = FieldValues>({
   };
 
   return (
-    <>
+    <Label>
       {label}
-      <TextField
+      <input
         type="text"
         value={hasFocus ? internalValue : field.value?.toString() ?? ""}
         onChange={onChange}
@@ -57,6 +57,6 @@ export const GNumericField = <TFieldValues extends FieldValues = FieldValues>({
         }}
       />
       <ErrorMessage fieldState={fieldState} />
-    </>
+    </Label>
   );
 };

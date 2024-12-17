@@ -1,4 +1,3 @@
-import { Button, Typography } from "@mui/material";
 import { BillingPopupArgs } from "./types";
 import {
   useAddBillingQuery,
@@ -27,9 +26,9 @@ export const BillingPopup = ({ args, onClose }: IProps) => {
   switch (args.mode) {
     case "create":
       title = "Ajout d'une transaction";
-      body = <Typography>Ajouter</Typography>;
+      body = <p>Ajouter</p>;
       footer = (
-        <Button
+        <button
           type="button"
           disabled={isAddBillingPending}
           onClick={() =>
@@ -47,14 +46,14 @@ export const BillingPopup = ({ args, onClose }: IProps) => {
           }
         >
           Valider
-        </Button>
+        </button>
       );
       break;
     case "edit":
       title = "Modification d'une transaction";
-      body = <Typography>Modifier</Typography>;
+      body = <p>Modifier</p>;
       footer = (
-        <Button
+        <button
           type="button"
           disabled={isEditBillingPending}
           onClick={() =>
@@ -73,30 +72,26 @@ export const BillingPopup = ({ args, onClose }: IProps) => {
           }
         >
           Valider
-        </Button>
+        </button>
       );
       break;
     case "delete":
       title = "Suppression d'une transaction";
-      body = (
-        <Typography>
-          Etes-vous sûr de vouloir supprimer cette ligne ?
-        </Typography>
-      );
+      body = <p>Etes-vous sûr de vouloir supprimer cette ligne ?</p>;
       footer = (
-        <Button
+        <button
           type="button"
           disabled={isDeleteBillingPending}
           onClick={() => deleteBilling({ id: args.billingId })}
         >
           Valider
-        </Button>
+        </button>
       );
       break;
   }
 
   return (
-    <Popup title={title} width={600} onClose={onClose} footer={footer}>
+    <Popup title={title} onClose={onClose} footer={footer}>
       {body}
     </Popup>
   );

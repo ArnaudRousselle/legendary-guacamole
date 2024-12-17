@@ -1,4 +1,4 @@
-import { Checkbox, CircularProgress } from "@mui/material";
+import { Checkbox, Spinner } from "@blueprintjs/core";
 import { useSetCheckedQuery } from "../../../queries/billings";
 
 interface IProps {
@@ -12,12 +12,11 @@ export const CheckedCheckbox = ({ billingId, checked }: IProps) => {
     <>
       <Checkbox
         disabled={isPending}
-        size="small"
         checked={checked}
         onChange={() => onChange({ id: billingId, checked: !checked })}
       />
       {
-        <CircularProgress
+        <Spinner
           style={{ visibility: isPending ? undefined : "hidden" }}
           size={16}
         />

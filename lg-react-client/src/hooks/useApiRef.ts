@@ -1,5 +1,5 @@
 import { MutableRefObject, useRef } from "react";
-import { BaseAPI, Configuration, FetchParams } from "../api";
+import { BaseAPI, Configuration } from "../api";
 import { getBasePath } from "../utils/basePath";
 
 export function useApiRef<T extends BaseAPI>(
@@ -21,7 +21,7 @@ export function useApiRef<T extends BaseAPI>(
             try {
               jsonError = await response.json();
               console.error(jsonError);
-            } catch (e) {
+            } catch {
               throw { message: "Erreur inattendue" };
             }
             if ("message" in jsonError) throw { message: jsonError.message };

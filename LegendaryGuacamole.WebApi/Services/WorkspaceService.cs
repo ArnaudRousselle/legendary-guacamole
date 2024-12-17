@@ -29,7 +29,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 {
                     Id = Guid.NewGuid(),
                     Amount = i + 1,
-                    Checked = true,
+                    Checked = false,
                     Title = "Mon titre " + i,
                     Comment = i % 3 == 0 ? "mon commentaire " + i : null,
                     ValuationDate = new DateOnly(2024, 10, 12),

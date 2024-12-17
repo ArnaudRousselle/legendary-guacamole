@@ -50,7 +50,7 @@ export const BillingsListing = () => {
               <tr key={b.id}>
                 <td align="center">
                   <DropDownButton
-                    icon={<MoreVertIcon />}
+                    icon="chevron-down"
                     actions={[
                       {
                         text: "Modifier",

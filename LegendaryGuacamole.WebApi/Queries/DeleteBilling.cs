@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using LegendaryGuacamole.Models.Dtos;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Models;
 
@@ -10,16 +10,6 @@ public class DeleteBilling : WorkspaceQuery<DeleteBillingInput, DeleteBillingEve
     => new();
 }
 
-public class DeleteBillingInput
-{
-    [Required]
-    public Guid Id { get; set; }
-}
-
 public class DeleteBillingEvent
-{
-}
-
-public class DeleteBillingOutput
 {
 }

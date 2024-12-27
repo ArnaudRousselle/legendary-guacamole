@@ -22,14 +22,14 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             };
 
         //todo ARNAUD: à supprimer
-        for (var i = 0; i < 100; i++)
+        for (var i = 0; i < 15; i++)
             workspace = workspace with
             {
                 Billings = workspace.Billings.Add(new()
                 {
                     Id = Guid.NewGuid(),
-                    Amount = i + 1,
-                    Checked = true,
+                    Amount = i + 1.45m,
+                    Checked = false,
                     Title = "Mon titre " + i,
                     Comment = i % 3 == 0 ? "mon commentaire " + i : null,
                     ValuationDate = new DateOnly(2024, 10, 12),
@@ -79,9 +79,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case ListBillings q:
-                            await q.OnSuccess(ToQueryResponse(Handle(q)));
-                            break;
-                        case SetChecked q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         default:
@@ -294,10 +291,10 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         {
             NextValuationDate = repetitiveBilling.Frequence switch
             {
-                Models.Frequence.Monthly => repetitiveBilling.NextValuationDate.AddMonths(1),
-                Models.Frequence.Bimonthly => repetitiveBilling.NextValuationDate.AddMonths(2),
-                Models.Frequence.Quaterly => repetitiveBilling.NextValuationDate.AddMonths(3),
-                Models.Frequence.Annual => repetitiveBilling.NextValuationDate.AddMonths(12),
+                LegendaryGuacamole.Models.Common.Frequence.Monthly => repetitiveBilling.NextValuationDate.AddMonths(1),
+                LegendaryGuacamole.Models.Common.Frequence.Bimonthly => repetitiveBilling.NextValuationDate.AddMonths(2),
+                LegendaryGuacamole.Models.Common.Frequence.Quaterly => repetitiveBilling.NextValuationDate.AddMonths(3),
+                LegendaryGuacamole.Models.Common.Frequence.Annual => repetitiveBilling.NextValuationDate.AddMonths(12),
                 _ => throw new NotImplementedException()
             },
         };
@@ -320,32 +317,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
     private ListBillingsEvent Handle(ListBillings _)
     {
         return new();
-    }
-
-    private SetCheckedEvent Handle(SetChecked q)
-    {
-        var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
-
-        if (index < 0)
-            throw new Exception("billing not found");
-
-        var billing = workspace.Billings[index] with
-        {
-            Checked = q.Input.Checked,
-        };
-
-        workspace = workspace with
-        {
-            Billings = workspace.Billings
-                .RemoveAt(index)
-                .Insert(index, billing)
-        };
-
-        return new()
-        {
-            Id = billing.Id,
-            Checked = billing.Checked
-        };
     }
 
     private QueryResponse<T> ToQueryResponse<T>(T result)

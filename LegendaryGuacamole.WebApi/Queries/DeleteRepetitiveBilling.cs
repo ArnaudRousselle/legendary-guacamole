@@ -1,6 +1,6 @@
 
 
-using System.ComponentModel.DataAnnotations;
+using LegendaryGuacamole.Models.Dtos;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Models;
 
@@ -12,16 +12,6 @@ public class DeleteRepetitiveBilling : WorkspaceQuery<DeleteRepetitiveBillingInp
         => new();
 }
 
-public class DeleteRepetitiveBillingInput
-{
-    [Required]
-    public Guid Id { get; init; }
-}
-
 public class DeleteRepetitiveBillingEvent
-{
-}
-
-public class DeleteRepetitiveBillingOutput
 {
 }

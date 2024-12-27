@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LegendaryGuacamole.Models.Dtos;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Models;
 
@@ -16,17 +17,6 @@ public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryEvent, GetSu
     };
 }
 
-public class GetSummaryInput
-{
-}
-
 public class GetSummaryEvent
 {
 }
-
-public class GetSummaryOutput
-{
-    [Required]
-    public required decimal Amount { get; set; }
-}
-

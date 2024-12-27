@@ -1,20 +1,3 @@
 {
-  "tasks": [
-    {
-      "type": "npm",
-      "script": "dev",
-      "path": "lg-react-client",
-      "problemMatcher": [],
-      "label": "npm run dev",
-      "detail": "Start debug"
-    },
-    {
-      "type": "npm",
-      "script": "gen",
-      "path": "lg-react-client",
-      "problemMatcher": [],
-      "label": "npm run gen",
-      "detail": "Generate API"
-    }
-  ]
+  "tasks": []
 }

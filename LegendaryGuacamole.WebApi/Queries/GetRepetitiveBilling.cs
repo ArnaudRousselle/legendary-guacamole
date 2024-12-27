@@ -1,6 +1,5 @@
-using System.ComponentModel.DataAnnotations;
+using LegendaryGuacamole.Models.Dtos;
 using LegendaryGuacamole.WebApi.Channels;
-using LegendaryGuacamole.WebApi.Dtos;
 using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
@@ -24,29 +23,7 @@ public class GetRepetitiveBilling : WorkspaceQuery<GetRepetitiveBillingInput, Ge
     };
 }
 
-public class GetRepetitiveBillingInput
-{
-    [Required]
-    public Guid Id { get; set; }
-}
-
 public class GetRepetitiveBillingEvent
 {
     public required RepetitiveBilling RepetitiveBilling { get; set; }
-}
-
-public class GetRepetitiveBillingOutput
-{
-    [Required]
-    public required Guid Id { get; set; }
-    [Required]
-    public required ShortDate NextValuationDate { get; set; } = new();
-    [Required]
-    public required string Title { get; set; }
-    [Required]
-    public required decimal Amount { get; set; }
-    [Required]
-    public required bool IsSaving { get; set; }
-    [Required]
-    public required Frequence Frequence { get; set; }
 }

@@ -1,3 +1,5 @@
+using LegendaryGuacamole.Models.Common;
+
 namespace LegendaryGuacamole.WebApi.Models;
 
 public record RepetitiveBilling
@@ -8,12 +10,4 @@ public record RepetitiveBilling
     public required decimal Amount { get; init; }
     public required bool IsSaving { get; init; }
     public required Frequence Frequence { get; init; }
-}
-
-public enum Frequence
-{
-    Monthly = 1,
-    Bimonthly = 2,
-    Quaterly = 3,
-    Annual = 4
 }

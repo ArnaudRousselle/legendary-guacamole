@@ -6,10 +6,12 @@ HttpClient httpClient = new()
     BaseAddress = new("http://localhost:5152/")
 };
 
-RootCommand rootCommand = new("Gérer vos finances personnelles");
+RootCommand rootCommand = new("Gestion des finances personnelles");
 
 List<ConsoleCommand> commands = [
-    new ListBillings()
+    new AddBilling(),
+    new EditBilling(),
+    new ListBillings(),
 ];
 
 commands.ForEach(c => rootCommand.AddCommand(c.GetCommand(httpClient)));

@@ -31,7 +31,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                     Amount = i + 1.45m,
                     Checked = i % 5 == 0,
                     Title = "Mon titre " + i,
-                    Comment = i % 3 == 0 ? "mon commentaire " + i : null,
+                    Comment = i % 3 == 0 ? "mon commentaire " + i : "",
                     ValuationDate = new DateOnly(2024, 10, 12),
                     IsSaving = false
                 })
@@ -182,15 +182,25 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         if (index < 0)
             throw new Exception("billing not found");
 
-        var billing = workspace.Billings[index] with
-        {
-            Amount = q.Input.Amount,
-            Checked = q.Input.Checked,
-            Comment = q.Input.Comment,
-            IsSaving = q.Input.IsSaving,
-            Title = q.Input.Title,
-            ValuationDate = q.Input.ValuationDate.ToDateOnly(),
-        };
+        var billing = workspace.Billings[index];
+
+        if (q.Input.Amount != null)
+            billing = billing with { Amount = q.Input.Amount.Value };
+
+        if (q.Input.Checked != null)
+            billing = billing with { Checked = q.Input.Checked.Value };
+
+        if (q.Input.Comment != null)
+            billing = billing with { Comment = q.Input.Comment };
+
+        if (q.Input.IsSaving != null)
+            billing = billing with { IsSaving = q.Input.IsSaving.Value };
+
+        if (q.Input.Title != null)
+            billing = billing with { Title = q.Input.Title };
+
+        if (q.Input.ValuationDate != null)
+            billing = billing with { ValuationDate = q.Input.ValuationDate.ToDateOnly() };
 
         workspace = workspace with
         {
@@ -212,14 +222,22 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         if (index < 0)
             throw new Exception("repetitive billing not found");
 
-        var repetitiveBilling = workspace.RepetitiveBillings[index] with
-        {
-            NextValuationDate = q.Input.NextValuationDate.ToDateOnly(),
-            Title = q.Input.Title,
-            Amount = q.Input.Amount,
-            IsSaving = q.Input.IsSaving,
-            Frequence = q.Input.Frequence
-        };
+        var repetitiveBilling = workspace.RepetitiveBillings[index];
+
+        if (q.Input.NextValuationDate != null)
+            repetitiveBilling = repetitiveBilling with { NextValuationDate = q.Input.NextValuationDate.ToDateOnly() };
+
+        if (q.Input.Title != null)
+            repetitiveBilling = repetitiveBilling with { Title = q.Input.Title };
+
+        if (q.Input.Amount != null)
+            repetitiveBilling = repetitiveBilling with { Amount = q.Input.Amount.Value };
+
+        if (q.Input.IsSaving != null)
+            repetitiveBilling = repetitiveBilling with { IsSaving = q.Input.IsSaving.Value };
+
+        if (q.Input.Frequence != null)
+            repetitiveBilling = repetitiveBilling with { Frequence = q.Input.Frequence.Value };
 
         workspace = workspace with
         {
@@ -281,7 +299,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             Id = newId,
             Amount = repetitiveBilling.Amount,
             Checked = false,
-            Comment = null,
+            Comment = "",
             IsSaving = repetitiveBilling.IsSaving,
             Title = repetitiveBilling.Title,
             ValuationDate = repetitiveBilling.NextValuationDate

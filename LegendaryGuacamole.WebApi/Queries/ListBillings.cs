@@ -4,10 +4,12 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent, ListBillingsOutput[]>
+public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent, ListBillingsOutput>
 {
-    public override ListBillingsOutput[] Map(Workspace workspace, ListBillingsEvent evt)
-    => workspace.Billings
+    public override ListBillingsOutput Map(Workspace workspace, ListBillingsEvent evt)
+    => new()
+    {
+        Items = workspace.Billings
         .Where(b =>
         {
             if (!(Input.WithChecked ?? false) && b.Checked)
@@ -24,7 +26,7 @@ public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent,
         })
         .OrderBy(n => n.ValuationDate)
         .ThenBy(n => n.Id)
-        .Select(n => new ListBillingsOutput
+        .Select(n => new ListBillingsOutput.Item
         {
             Id = n.Id,
             ValuationDate = new()
@@ -39,7 +41,8 @@ public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent,
             Comment = n.Comment,
             IsSaving = n.IsSaving
         })
-        .ToArray();
+        .ToArray()
+    };
 }
 
 public class ListBillingsEvent

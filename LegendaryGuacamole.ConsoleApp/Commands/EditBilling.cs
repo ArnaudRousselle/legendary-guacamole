@@ -14,7 +14,7 @@ public class EditBilling : ConsoleCommand
 
     protected override void InitializeCommand(Command command, HttpClient httpClient)
     {
-        Argument<Guid> id = new("id", "Montant");
+        Argument<Guid> id = new("id", "Identifiant de la ligne");
         Option<decimal?> amount = new(["--amount", "-a"], "Montant");
         Option<bool?> @checked = new(["--checked", "-c"], "La ligne est pointée");
         Option<string?> comment = new(["--comment"], "Commentaire");

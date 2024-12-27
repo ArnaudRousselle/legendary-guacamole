@@ -11,6 +11,7 @@ RootCommand rootCommand = new("Gestion des finances personnelles");
 List<ConsoleCommand> commands = [
     new AddBilling(),
     new EditBilling(),
+    new DeleteBilling(),
     new ListBillings(),
 ];
 

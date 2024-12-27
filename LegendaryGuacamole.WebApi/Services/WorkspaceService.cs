@@ -22,14 +22,14 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             };
 
         //todo ARNAUD: à supprimer
-        for (var i = 0; i < 15; i++)
+        for (var i = 0; i < 100; i++)
             workspace = workspace with
             {
                 Billings = workspace.Billings.Add(new()
                 {
                     Id = Guid.NewGuid(),
                     Amount = i + 1.45m,
-                    Checked = false,
+                    Checked = i % 5 == 0,
                     Title = "Mon titre " + i,
                     Comment = i % 3 == 0 ? "mon commentaire " + i : null,
                     ValuationDate = new DateOnly(2024, 10, 12),

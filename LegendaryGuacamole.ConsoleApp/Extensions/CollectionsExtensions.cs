@@ -5,7 +5,8 @@ public static class CollectionsExtensions
     public static void ToPage<T>(this IEnumerable<T> items, int pageSize, Action<List<T>> print)
     {
         var currentPage = 1;
-        var pageCount = (int)Math.Ceiling((decimal)items.Count() / pageSize);
+        var total = items.Count();
+        var pageCount = (int)Math.Ceiling((decimal)total / pageSize);
 
         string? input = null;
 
@@ -18,8 +19,12 @@ public static class CollectionsExtensions
 
             if (pageCount > 1)
             {
-                Console.WriteLine($"Page {currentPage} / {pageCount} - Aller à la page :");
+                Console.WriteLine($"{total} élément{(total >= 2 ? "s" : "")} - Page {currentPage} / {pageCount} - Aller à la page :");
                 input = pageCount > 1 ? Console.ReadLine() : null;
+            }
+            else
+            {
+                Console.WriteLine($"{total} élément{(total >= 2 ? "s" : "")}");
             }
         } while (input != null && int.TryParse(input, out currentPage) && currentPage > 0 && currentPage <= pageCount);
     }

@@ -5,11 +5,11 @@ using LegendaryGuacamole.Models.Dtos;
 
 namespace LegendaryGuacamole.ConsoleApp.Commands;
 
-public class DeleteBilling : ConsoleCommand
+public class DeleteRepetitiveBilling : ConsoleCommand
 {
-    protected override string Name => "delete";
+    protected override string Name => "deleteRepetitive";
 
-    protected override string Description => "Supprime une ligne du compte";
+    protected override string Description => "Supprime une ligne de l'échéancier";
 
     protected override void InitializeCommand(Command command, HttpClient httpClient)
     {
@@ -20,13 +20,13 @@ public class DeleteBilling : ConsoleCommand
         command.SetHandler(async (id) =>
         {
             var response = await httpClient.PostAsJsonAsync(
-                "/deleteBilling",
-                new DeleteBillingInput
+                "/deleteRepetitiveBilling",
+                new DeleteRepetitiveBillingInput
                 {
                     Id = id,
                 });
 
-            await response.ContinueWithAsync<DeleteBillingOutput>(output =>
+            await response.ContinueWithAsync<DeleteRepetitiveBillingOutput>(output =>
             {
                 Console.WriteLine("Supprimé");
             });

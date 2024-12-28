@@ -56,4 +56,42 @@ public static class Parsers
             Year = year
         };
     };
+
+    public static ParseArgument<Frequence?> NullableFrequenceParser => result =>
+    {
+        if (result.Tokens.Count == 0)
+            return null;
+        var value = result.Tokens.Single().Value;
+        switch (value)
+        {
+            case "monthly": return Frequence.Monthly;
+            case "bimonthly": return Frequence.Bimonthly;
+            case "quaterly": return Frequence.Quaterly;
+            case "annual": return Frequence.Annual;
+            default:
+                {
+                    result.ErrorMessage = "La valeur doit être : monthly, bimonthly, quaterly, annual";
+                    return Frequence.Monthly;
+                }
+        }
+    };
+
+    public static ParseArgument<Frequence> FrequenceParser => result =>
+    {
+        if (result.Tokens.Count == 0)
+            return Frequence.Monthly;
+        var value = result.Tokens.Single().Value;
+        switch (value)
+        {
+            case "monthly": return Frequence.Monthly;
+            case "bimonthly": return Frequence.Bimonthly;
+            case "quaterly": return Frequence.Quaterly;
+            case "annual": return Frequence.Annual;
+            default:
+                {
+                    result.ErrorMessage = "La valeur doit être : monthly, bimonthly, quaterly, annual";
+                    return Frequence.Monthly;
+                }
+        }
+    };
 }

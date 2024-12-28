@@ -4,27 +4,30 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingEvent, GetBillingOutput>
+public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingResult, GetBillingOutput>
 {
-    public override GetBillingOutput Map(Workspace workspace, GetBillingEvent evt)
-    => new()
+    public override GetBillingOutput Map(Workspace workspace, GetBillingResult evt)
     {
-        Id = evt.Billing.Id,
-        ValuationDate = new()
+        var billing = workspace.Billings[evt.Index];
+        return new()
         {
-            Year = evt.Billing.ValuationDate.Year,
-            Month = evt.Billing.ValuationDate.Month,
-            Day = evt.Billing.ValuationDate.Day
-        },
-        Title = evt.Billing.Title,
-        Amount = evt.Billing.Amount,
-        Checked = evt.Billing.Checked,
-        Comment = evt.Billing.Comment,
-        IsSaving = evt.Billing.IsSaving
-    };
+            Id = billing.Id,
+            ValuationDate = new()
+            {
+                Year = billing.ValuationDate.Year,
+                Month = billing.ValuationDate.Month,
+                Day = billing.ValuationDate.Day
+            },
+            Title = billing.Title,
+            Amount = billing.Amount,
+            Checked = billing.Checked,
+            Comment = billing.Comment,
+            IsSaving = billing.IsSaving
+        };
+    }
 }
 
-public class GetBillingEvent
+public class GetBillingResult
 {
-    public required Billing Billing { get; set; }
+    public required int Index { get; set; }
 }

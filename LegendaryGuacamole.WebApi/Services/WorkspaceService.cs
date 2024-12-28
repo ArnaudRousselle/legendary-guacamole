@@ -81,6 +81,9 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         case ListBillings q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case ListRepetitiveBillings q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
@@ -94,7 +97,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         }
     }
 
-    private AddBillingEvent Handle(AddBilling q)
+    private AddBillingResult Handle(AddBilling q)
     {
         var newId = Guid.NewGuid();
 
@@ -116,11 +119,11 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
         return new()
         {
-            Billing = newBilling
+            Index = workspace.Billings.Length - 1
         };
     }
 
-    private AddRepetitiveBillingEvent Handle(AddRepetitiveBilling q)
+    private AddRepetitiveBillingResult Handle(AddRepetitiveBilling q)
     {
         var newId = Guid.NewGuid();
 
@@ -141,11 +144,11 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
         return new()
         {
-            RepetitiveBilling = newRepetitiveBilling
+            Index = workspace.RepetitiveBillings.Length - 1
         };
     }
 
-    private DeleteBillingEvent Handle(DeleteBilling q)
+    private DeleteBillingResult Handle(DeleteBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
 
@@ -160,7 +163,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         return new();
     }
 
-    private DeleteRepetitiveBillingEvent Handle(DeleteRepetitiveBilling q)
+    private DeleteRepetitiveBillingResult Handle(DeleteRepetitiveBilling q)
     {
         var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
 
@@ -175,7 +178,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         return new();
     }
 
-    private EditBillingEvent Handle(EditBilling q)
+    private EditBillingResult Handle(EditBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
 
@@ -209,13 +212,10 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 .Insert(index, billing)
         };
 
-        return new()
-        {
-            Billing = billing
-        };
+        return new();
     }
 
-    private EditRepetitiveBillingEvent Handle(EditRepetitiveBilling q)
+    private EditRepetitiveBillingResult Handle(EditRepetitiveBilling q)
     {
         var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
 
@@ -246,13 +246,10 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 .Insert(index, repetitiveBilling)
         };
 
-        return new()
-        {
-            RepetitiveBilling = repetitiveBilling
-        };
+        return new();
     }
 
-    private GetBillingEvent Handle(GetBilling q)
+    private GetBillingResult Handle(GetBilling q)
     {
         var index = workspace.Billings.Find(b => b.Id == q.Input.Id);
 
@@ -261,11 +258,11 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
         return new()
         {
-            Billing = workspace.Billings[index]
+            Index = index
         };
     }
 
-    private GetRepetitiveBillingEvent Handle(GetRepetitiveBilling q)
+    private GetRepetitiveBillingResult Handle(GetRepetitiveBilling q)
     {
         var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
 
@@ -274,18 +271,18 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
         return new()
         {
-            RepetitiveBilling = workspace.RepetitiveBillings[index]
+            Index = index
         };
     }
 
-    private GetSummaryEvent Handle(GetSummary q)
+    private GetSummaryResult Handle(GetSummary q)
     {
         return new();
     }
 
-    private InsertNextBillingEvent Handle(InsertNextBilling q)
+    private InsertNextBillingResult Handle(InsertNextBilling q)
     {
-        var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.Id);
+        var index = workspace.RepetitiveBillings.Find(b => b.Id == q.Input.RepetitiveBillingId);
 
         if (index < 0)
             throw new Exception("repetitive billing not found");
@@ -325,14 +322,18 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 .Insert(index, repetitiveBilling),
         };
 
-        return new InsertNextBillingEvent
+        return new InsertNextBillingResult
         {
-            Billing = newBilling,
-            RepetitiveBilling = editedRepetitiveBilling
+            Index = workspace.Billings.Length - 1
         };
     }
 
-    private ListBillingsEvent Handle(ListBillings _)
+    private ListBillingsResult Handle(ListBillings _)
+    {
+        return new();
+    }
+
+    private ListRepetitiveBillingsResult Handle(ListRepetitiveBillings _)
     {
         return new();
     }

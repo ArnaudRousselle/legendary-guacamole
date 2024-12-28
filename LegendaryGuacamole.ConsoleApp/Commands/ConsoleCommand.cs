@@ -15,6 +15,4 @@ public abstract class ConsoleCommand
         InitializeCommand(command, httpClient);
         return command;
     }
-
-
 }

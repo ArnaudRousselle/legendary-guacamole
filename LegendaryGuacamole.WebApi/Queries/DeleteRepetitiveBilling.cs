@@ -6,12 +6,12 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class DeleteRepetitiveBilling : WorkspaceQuery<DeleteRepetitiveBillingInput, DeleteRepetitiveBillingEvent, DeleteRepetitiveBillingOutput>
+public class DeleteRepetitiveBilling : WorkspaceQuery<DeleteRepetitiveBillingInput, DeleteRepetitiveBillingResult, DeleteRepetitiveBillingOutput>
 {
-    public override DeleteRepetitiveBillingOutput Map(Workspace workspace, DeleteRepetitiveBillingEvent evt)
-        => new();
+    public override DeleteRepetitiveBillingOutput Map(Workspace workspace, DeleteRepetitiveBillingResult evt)
+    => new();
 }
 
-public class DeleteRepetitiveBillingEvent
+public class DeleteRepetitiveBillingResult
 {
 }

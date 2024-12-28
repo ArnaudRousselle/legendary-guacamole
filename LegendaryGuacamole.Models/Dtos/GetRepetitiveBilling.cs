@@ -4,7 +4,7 @@ namespace LegendaryGuacamole.Models.Dtos;
 
 public class GetRepetitiveBillingInput
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
 }
 
 public class GetRepetitiveBillingOutput

@@ -4,26 +4,12 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class EditRepetitiveBilling : WorkspaceQuery<EditRepetitiveBillingInput, EditRepetitiveBillingEvent, EditRepetitiveBillingOutput>
+public class EditRepetitiveBilling : WorkspaceQuery<EditRepetitiveBillingInput, EditRepetitiveBillingResult, EditRepetitiveBillingOutput>
 {
-    public override EditRepetitiveBillingOutput Map(Workspace workspace, EditRepetitiveBillingEvent evt)
-    => new()
-    {
-        Id = evt.RepetitiveBilling.Id,
-        NextValuationDate = new()
-        {
-            Year = evt.RepetitiveBilling.NextValuationDate.Year,
-            Month = evt.RepetitiveBilling.NextValuationDate.Month,
-            Day = evt.RepetitiveBilling.NextValuationDate.Day
-        },
-        Title = evt.RepetitiveBilling.Title,
-        Amount = evt.RepetitiveBilling.Amount,
-        IsSaving = evt.RepetitiveBilling.IsSaving,
-        Frequence = evt.RepetitiveBilling.Frequence
-    };
+    public override EditRepetitiveBillingOutput Map(Workspace workspace, EditRepetitiveBillingResult evt)
+    => new();
 }
 
-public class EditRepetitiveBillingEvent
+public class EditRepetitiveBillingResult
 {
-    public required RepetitiveBilling RepetitiveBilling { get; set; }
 }

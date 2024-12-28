@@ -32,11 +32,11 @@ AppDomain.CurrentDomain
         var genericArguments = queryType.BaseType!.GetGenericArguments();
 
         var inputType = genericArguments[0];
-        var eventType = genericArguments[1];
+        var resultType = genericArguments[1];
         var outputType = genericArguments[2];
 
         var mapMethod = typeof(WebApplicationExtensions).GetMethod(nameof(WebApplicationExtensions.MapQuery));
-        mapMethod?.MakeGenericMethod([queryType, inputType, eventType, outputType])
+        mapMethod?.MakeGenericMethod([queryType, inputType, resultType, outputType])
             .Invoke(null, [app, queryType.Name, channel]);
     });
 

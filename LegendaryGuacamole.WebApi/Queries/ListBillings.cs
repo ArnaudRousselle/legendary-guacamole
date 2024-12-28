@@ -4,9 +4,9 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent, ListBillingsOutput>
+public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsResult, ListBillingsOutput>
 {
-    public override ListBillingsOutput Map(Workspace workspace, ListBillingsEvent evt)
+    public override ListBillingsOutput Map(Workspace workspace, ListBillingsResult evt)
     => new()
     {
         Items = workspace.Billings
@@ -45,6 +45,6 @@ public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsEvent,
     };
 }
 
-public class ListBillingsEvent
+public class ListBillingsResult
 {
 }

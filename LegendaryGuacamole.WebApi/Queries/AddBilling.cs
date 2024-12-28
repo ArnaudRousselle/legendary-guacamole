@@ -4,27 +4,16 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class AddBilling : WorkspaceQuery<AddBillingInput, AddBillingEvent, AddBillingOutput>
+public class AddBilling : WorkspaceQuery<AddBillingInput, AddBillingResult, AddBillingOutput>
 {
-    public override AddBillingOutput Map(Workspace workspace, AddBillingEvent evt)
+    public override AddBillingOutput Map(Workspace workspace, AddBillingResult evt)
     => new()
     {
-        Id = evt.Billing.Id,
-        ValuationDate = new()
-        {
-            Year = evt.Billing.ValuationDate.Year,
-            Month = evt.Billing.ValuationDate.Month,
-            Day = evt.Billing.ValuationDate.Day
-        },
-        Title = evt.Billing.Title,
-        Amount = evt.Billing.Amount,
-        Checked = evt.Billing.Checked,
-        Comment = evt.Billing.Comment,
-        IsSaving = evt.Billing.IsSaving
+        Id = workspace.Billings[evt.Index].Id,
     };
 }
 
-public class AddBillingEvent
+public class AddBillingResult
 {
-    public required Billing Billing { get; set; }
+    public required int Index { get; set; }
 }

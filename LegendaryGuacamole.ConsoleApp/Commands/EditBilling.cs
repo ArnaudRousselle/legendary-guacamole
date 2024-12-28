@@ -47,7 +47,7 @@ public class EditBilling : ConsoleCommand
 
             await response.ContinueWithAsync<EditBillingOutput>(output =>
             {
-                Console.WriteLine("Edité : " + output.Id);
+                Console.WriteLine("Edité");
             });
         }, id, amount, @checked, comment, saving, title, date);
 

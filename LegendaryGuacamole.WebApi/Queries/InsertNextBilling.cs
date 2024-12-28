@@ -6,45 +6,16 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class InsertNextBilling : WorkspaceQuery<InsertNextBillingInput, InsertNextBillingEvent, InsertNextBillingOutput>
+public class InsertNextBilling : WorkspaceQuery<InsertNextBillingInput, InsertNextBillingResult, InsertNextBillingOutput>
 {
-    public override InsertNextBillingOutput Map(Workspace workspace, InsertNextBillingEvent evt)
+    public override InsertNextBillingOutput Map(Workspace workspace, InsertNextBillingResult evt)
     => new()
     {
-        Billing = new()
-        {
-            Id = evt.Billing.Id,
-            ValuationDate = new()
-            {
-                Year = evt.Billing.ValuationDate.Year,
-                Month = evt.Billing.ValuationDate.Month,
-                Day = evt.Billing.ValuationDate.Day
-            },
-            Title = evt.Billing.Title,
-            Amount = evt.Billing.Amount,
-            Checked = evt.Billing.Checked,
-            Comment = evt.Billing.Comment,
-            IsSaving = evt.Billing.IsSaving
-        },
-        RepetitiveBilling = new()
-        {
-            Id = evt.RepetitiveBilling.Id,
-            NextValuationDate = new()
-            {
-                Year = evt.RepetitiveBilling.NextValuationDate.Year,
-                Month = evt.RepetitiveBilling.NextValuationDate.Month,
-                Day = evt.RepetitiveBilling.NextValuationDate.Day
-            },
-            Title = evt.RepetitiveBilling.Title,
-            Amount = evt.RepetitiveBilling.Amount,
-            IsSaving = evt.RepetitiveBilling.IsSaving,
-            Frequence = evt.RepetitiveBilling.Frequence
-        }
+        BillingId = workspace.Billings[evt.Index].Id
     };
 }
 
-public class InsertNextBillingEvent
+public class InsertNextBillingResult
 {
-    public required Billing Billing { get; set; }
-    public required RepetitiveBilling RepetitiveBilling { get; set; }
+    public required int Index { get; set; }
 }

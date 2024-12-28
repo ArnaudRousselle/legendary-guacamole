@@ -4,7 +4,7 @@ namespace LegendaryGuacamole.Models.Dtos;
 
 public class GetBillingInput
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
 }
 
 public class GetBillingOutput

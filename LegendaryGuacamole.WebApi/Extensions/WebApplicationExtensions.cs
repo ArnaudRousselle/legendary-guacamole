@@ -4,7 +4,7 @@ namespace LegendaryGuacamole.WebApi.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void MapQuery<TQuery, TInput, TEvent, TOutput>(this WebApplication app, string name, WorkspaceChannel channel) where TQuery : WorkspaceQuery<TInput, TEvent, TOutput>, new() where TInput : new()
+    public static void MapQuery<TQuery, TInput, TResult, TOutput>(this WebApplication app, string name, WorkspaceChannel channel) where TQuery : WorkspaceQuery<TInput, TResult, TOutput>, new() where TInput : new()
     {
         app.MapPost($"/{name[..1].ToLower()}{name[1..]}",
             async (TInput input) =>

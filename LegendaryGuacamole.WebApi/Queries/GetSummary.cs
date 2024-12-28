@@ -5,9 +5,9 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryEvent, GetSummaryOutput>
+public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryResult, GetSummaryOutput>
 {
-    public override GetSummaryOutput Map(Workspace workspace, GetSummaryEvent evt)
+    public override GetSummaryOutput Map(Workspace workspace, GetSummaryResult evt)
     => new()
     {
         Amount = workspace.Billings
@@ -17,6 +17,6 @@ public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryEvent, GetSu
     };
 }
 
-public class GetSummaryEvent
+public class GetSummaryResult
 {
 }

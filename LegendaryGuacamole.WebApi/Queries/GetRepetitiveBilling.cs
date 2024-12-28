@@ -4,26 +4,29 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class GetRepetitiveBilling : WorkspaceQuery<GetRepetitiveBillingInput, GetRepetitiveBillingEvent, GetRepetitiveBillingOutput>
+public class GetRepetitiveBilling : WorkspaceQuery<GetRepetitiveBillingInput, GetRepetitiveBillingResult, GetRepetitiveBillingOutput>
 {
-    public override GetRepetitiveBillingOutput Map(Workspace workspace, GetRepetitiveBillingEvent evt)
-    => new()
+    public override GetRepetitiveBillingOutput Map(Workspace workspace, GetRepetitiveBillingResult evt)
     {
-        Id = evt.RepetitiveBilling.Id,
-        NextValuationDate = new()
+        var repetitiveBilling = workspace.RepetitiveBillings[evt.Index];
+        return new()
         {
-            Year = evt.RepetitiveBilling.NextValuationDate.Year,
-            Month = evt.RepetitiveBilling.NextValuationDate.Month,
-            Day = evt.RepetitiveBilling.NextValuationDate.Day
-        },
-        Title = evt.RepetitiveBilling.Title,
-        Amount = evt.RepetitiveBilling.Amount,
-        IsSaving = evt.RepetitiveBilling.IsSaving,
-        Frequence = evt.RepetitiveBilling.Frequence
-    };
+            Id = repetitiveBilling.Id,
+            NextValuationDate = new()
+            {
+                Year = repetitiveBilling.NextValuationDate.Year,
+                Month = repetitiveBilling.NextValuationDate.Month,
+                Day = repetitiveBilling.NextValuationDate.Day
+            },
+            Title = repetitiveBilling.Title,
+            Amount = repetitiveBilling.Amount,
+            IsSaving = repetitiveBilling.IsSaving,
+            Frequence = repetitiveBilling.Frequence
+        };
+    }
 }
 
-public class GetRepetitiveBillingEvent
+public class GetRepetitiveBillingResult
 {
-    public required RepetitiveBilling RepetitiveBilling { get; set; }
+    public required int Index { get; set; }
 }

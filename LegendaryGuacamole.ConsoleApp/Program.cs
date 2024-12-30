@@ -9,8 +9,13 @@ HttpClient httpClient = new()
 RootCommand rootCommand = new("Gestion des finances personnelles");
 
 List<ConsoleCommand> commands = [
+    new PrintBilling(),
+    new PrintRepetitiveBilling(),
+    new PrintBalance(),
     new AddBilling(),
     new AddRepetitiveBilling(),
+    new InsertNextBilling(),
+    new MultipleInsertNextBilling(),
     new EditBilling(),
     new EditRepetitiveBilling(),
     new DeleteBilling(),

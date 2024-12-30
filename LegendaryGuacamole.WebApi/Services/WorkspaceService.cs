@@ -84,6 +84,9 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         case ListRepetitiveBillings q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case MultipleInsertNextBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
@@ -336,6 +339,62 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
     private ListRepetitiveBillingsResult Handle(ListRepetitiveBillings _)
     {
         return new();
+    }
+
+    private MultipleInsertNextBillingResult Handle(MultipleInsertNextBilling q)
+    {
+        var maxDate = q.Input.MaxDate.ToDateOnly();
+        var indexes = workspace.RepetitiveBillings
+            .Where(b => b.NextValuationDate <= maxDate)
+            .Select((_, i) => i)
+            .ToArray();
+
+        var newWorkspace = workspace;
+
+        foreach (var index in indexes)
+        {
+            var repetitiveBilling = workspace.RepetitiveBillings[index];
+
+            var newId = Guid.NewGuid();
+
+            Models.Billing newBilling = new()
+            {
+                Id = newId,
+                Amount = repetitiveBilling.Amount,
+                Checked = false,
+                Comment = "",
+                IsSaving = repetitiveBilling.IsSaving,
+                Title = repetitiveBilling.Title,
+                ValuationDate = repetitiveBilling.NextValuationDate
+            };
+
+            var editedRepetitiveBilling = repetitiveBilling with
+            {
+                NextValuationDate = repetitiveBilling.Frequence switch
+                {
+                    LegendaryGuacamole.Models.Common.Frequence.Monthly => repetitiveBilling.NextValuationDate.AddMonths(1),
+                    LegendaryGuacamole.Models.Common.Frequence.Bimonthly => repetitiveBilling.NextValuationDate.AddMonths(2),
+                    LegendaryGuacamole.Models.Common.Frequence.Quaterly => repetitiveBilling.NextValuationDate.AddMonths(3),
+                    LegendaryGuacamole.Models.Common.Frequence.Annual => repetitiveBilling.NextValuationDate.AddMonths(12),
+                    _ => throw new NotImplementedException()
+                },
+            };
+
+            newWorkspace = newWorkspace with
+            {
+                Billings = newWorkspace.Billings.Add(newBilling),
+                RepetitiveBillings = newWorkspace.RepetitiveBillings
+                    .RemoveAt(index)
+                    .Insert(index, repetitiveBilling),
+            };
+        }
+
+        workspace = newWorkspace;
+
+        return new()
+        {
+            Indexes = indexes
+        };
     }
 
     private QueryResponse<T> ToQueryResponse<T>(T result)

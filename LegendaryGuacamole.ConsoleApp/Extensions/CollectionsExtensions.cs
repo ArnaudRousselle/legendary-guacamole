@@ -4,28 +4,72 @@ public static class CollectionsExtensions
 {
     public static void ToPage<T>(this IEnumerable<T> items, int pageSize, Action<List<T>> print)
     {
-        var currentPage = 1;
+        var currentLine = 0;
         var total = items.Count();
-        var pageCount = (int)Math.Ceiling((decimal)total / pageSize);
+        var isTruncated = pageSize < total;
 
-        string? input = null;
-
-        do
+        while (true)
         {
-            if (pageCount > 1)
-                Console.Clear();
-
-            print(items.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList());
-
-            if (pageCount > 1)
+            if (isTruncated)
             {
-                Console.WriteLine($"{total} élément{(total >= 2 ? "s" : "")} - Page {currentPage} / {pageCount} - Aller à la page :");
-                input = pageCount > 1 ? Console.ReadLine() : null;
+                Console.Clear();
+                Console.WriteLine($"∧ {currentLine}");
+            }
+
+            print(items.Skip(currentLine).Take(pageSize).ToList());
+
+            if (isTruncated)
+            {
+                Console.WriteLine($"∨ {total - currentLine - pageSize}");
+                Console.WriteLine($"{total} élément{(total >= 2 ? "s" : "")}");
+                Console.WriteLine("Appuyez sur ESC pour quitter");
+
+                while (true)
+                {
+                    while (!Console.KeyAvailable)
+                        Thread.Sleep(50);
+
+                    var keyInfo = Console.ReadKey();
+
+                    if (keyInfo.Key == ConsoleKey.DownArrow)
+                    {
+                        currentLine = Math.Min(currentLine + 1, total - pageSize);
+                        break;
+                    }
+                    else if (keyInfo.Key == ConsoleKey.RightArrow)
+                    {
+                        currentLine = Math.Min(currentLine + pageSize, total - pageSize);
+                        break;
+                    }
+                    else if (keyInfo.Key == ConsoleKey.UpArrow)
+                    {
+                        currentLine = Math.Max(currentLine - 1, 0);
+                        break;
+                    }
+                    else if (keyInfo.Key == ConsoleKey.LeftArrow)
+                    {
+                        currentLine = Math.Max(currentLine - pageSize, 0);
+                        break;
+                    }
+                    else if (keyInfo.Key == ConsoleKey.Escape)
+                    {
+                        Console.WriteLine(" ");
+                        return;
+                    }
+                    else
+                    {
+                        Console.SetCursorPosition(0, Console.CursorTop);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition(0, Console.CursorTop);
+                        Console.Beep();
+                    }
+                }
             }
             else
             {
                 Console.WriteLine($"{total} élément{(total >= 2 ? "s" : "")}");
+                return;
             }
-        } while (input != null && int.TryParse(input, out currentPage) && currentPage > 0 && currentPage <= pageCount);
+        }
     }
 }

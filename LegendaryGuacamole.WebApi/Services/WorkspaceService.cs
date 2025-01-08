@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text.Json;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Queries;
 
@@ -7,35 +8,50 @@ namespace LegendaryGuacamole.WebApi.Services;
 public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
     : BackgroundService
 {
-    private Models.Workspace workspace = default!;
+    private Models.Workspace workspace = new()
+    {
+        Billings = [],
+        RepetitiveBillings = []
+    };
+
+    private DateTime _lastFileAccess = DateTime.MinValue;
+
+    private void Save(bool debug = false)
+    {
+        if (debug)
+        {
+            //todo ARNAUD: à supprimer
+            for (var i = 0; i < 100; i++)
+                workspace = workspace with
+                {
+                    Billings = workspace.Billings.Add(new()
+                    {
+                        Id = Guid.NewGuid(),
+                        Amount = i + 1.45m,
+                        Checked = i % 5 == 0,
+                        Title = "Mon titre " + i,
+                        Comment = i % 3 == 0 ? "mon commentaire " + i : "",
+                        ValuationDate = new DateOnly(2024, 10, 12),
+                        IsSaving = false
+                    })
+                };
+        }
+
+        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
+        var json = JsonSerializer.Serialize(workspace, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+        File.WriteAllText(fileName, json);
+        _lastFileAccess = DateTime.Now;
+    }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        const string fileName = "./data.lgc";
+        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
 
-        workspace = File.Exists(fileName)
-            ? System.Text.Json.JsonSerializer.Deserialize<Models.Workspace>(File.ReadAllText(fileName))!
-            : new()
-            {
-                Billings = [],
-                RepetitiveBillings = []
-            };
-
-        //todo ARNAUD: à supprimer
-        for (var i = 0; i < 100; i++)
-            workspace = workspace with
-            {
-                Billings = workspace.Billings.Add(new()
-                {
-                    Id = Guid.NewGuid(),
-                    Amount = i + 1.45m,
-                    Checked = i % 5 == 0,
-                    Title = "Mon titre " + i,
-                    Comment = i % 3 == 0 ? "mon commentaire " + i : "",
-                    ValuationDate = new DateOnly(2024, 10, 12),
-                    IsSaving = false
-                })
-            };
+        if (!File.Exists(fileName))
+            Save(true);
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {
@@ -44,27 +60,39 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                 if (message == null)
                     continue;
 
+                if (DateTime.Now - _lastFileAccess >= TimeSpan.FromMinutes(5))
+                {
+                    workspace = JsonSerializer.Deserialize<Models.Workspace>(File.ReadAllText(fileName))!;
+                    _lastFileAccess = DateTime.Now;
+                }
+
                 try
                 {
                     switch (message)
                     {
                         case AddBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case AddRepetitiveBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case DeleteBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case DeleteRepetitiveBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case EditBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case EditRepetitiveBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case GetBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
@@ -77,6 +105,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                             break;
                         case InsertNextBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case ListBillings q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
@@ -86,6 +115,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                             break;
                         case MultipleInsertNextBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
                             break;
                         case ShowProjection q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));

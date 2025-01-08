@@ -22,6 +22,7 @@ List<ConsoleCommand> commands = [
     new DeleteRepetitiveBilling(),
     new ListBillings(),
     new ListRepetitiveBillings(),
+    new ShowProjection()
 ];
 
 commands.ForEach(c => rootCommand.AddCommand(c.GetCommand(httpClient)));

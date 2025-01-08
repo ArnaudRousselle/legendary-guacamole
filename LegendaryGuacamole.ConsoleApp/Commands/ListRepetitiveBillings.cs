@@ -14,7 +14,7 @@ public class ListRepetitiveBillings : ConsoleCommand
 
     protected override void InitializeCommand(Command command, HttpClient httpClient)
     {
-        Option<int?> pageSize = new(["--pageSize", "-p"], "recherche sur le montant");
+        Option<int?> pageSize = new(["--pageSize", "-p"], "nombre d'éléments par page");
         command.AddOption(pageSize);
 
         command.SetHandler(async (pageSize) =>

@@ -14,7 +14,7 @@ public class ListBillings : ConsoleCommand
 
     protected override void InitializeCommand(Command command, HttpClient httpClient)
     {
-        Option<int?> pageSize = new(["--pageSize", "-p"], "recherche sur le montant");
+        Option<int?> pageSize = new(["--pageSize", "-p"], "nombre d'éléments par page");
         Option<decimal?> amount = new(["--amount", "-a"], "recherche sur le montant");
         Option<decimal?> deltaAmount = new(["--delta", "-d"], "applique un delta sur le montant");
         Option<ShortDate?> endDate = new(["--end", "-e"], Parsers.NullableShortDateParser, false, "recherche sur la date (borne max)");

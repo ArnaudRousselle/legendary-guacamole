@@ -87,6 +87,9 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         case MultipleInsertNextBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case ShowProjection q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
@@ -395,6 +398,11 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         {
             Indexes = indexes
         };
+    }
+
+    private ShowProjectionResult Handle(ShowProjection q)
+    {
+        return new();
     }
 
     private QueryResponse<T> ToQueryResponse<T>(T result)

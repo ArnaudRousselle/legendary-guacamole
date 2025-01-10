@@ -388,7 +388,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         && n.ValuationDate <= date.AddDays(5))
                     .OrderByDescending(n => n.ValuationDate == date)
                     .Select(n => n.Id)
-                    .ToArray() ?? [];
+                    .ToArray();
 
                 return new Models.Line()
                 {

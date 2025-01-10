@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using LegendaryGuacamole.Models.Dtos;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Models;

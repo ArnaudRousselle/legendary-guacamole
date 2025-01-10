@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using System.Text;
 using System.Text.Json;
 using LegendaryGuacamole.WebApi.Channels;
+using LegendaryGuacamole.WebApi.Commons;
 using LegendaryGuacamole.WebApi.Queries;
 
 namespace LegendaryGuacamole.WebApi.Services;
@@ -14,11 +16,26 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         RepetitiveBillings = []
     };
 
+    private Models.Import? import;
+
     private DateTime _lastFileAccess = DateTime.MinValue;
 
-    private void Save(bool debug = false)
+    private void Save()
     {
-        if (debug)
+        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
+        var json = JsonSerializer.Serialize(workspace, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+        File.WriteAllText(fileName, json);
+        _lastFileAccess = DateTime.Now;
+    }
+
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
+
+        if (!File.Exists(fileName))
         {
             //todo ARNAUD: à supprimer
             for (var i = 0; i < 100; i++)
@@ -35,23 +52,9 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         IsSaving = false
                     })
                 };
+
+            Save();
         }
-
-        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
-        var json = JsonSerializer.Serialize(workspace, new JsonSerializerOptions
-        {
-            WriteIndented = true
-        });
-        File.WriteAllText(fileName, json);
-        _lastFileAccess = DateTime.Now;
-    }
-
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
-
-        if (!File.Exists(fileName))
-            Save(true);
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {
@@ -104,6 +107,10 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case InsertNextBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
+                            break;
+                        case ImportFile q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             Save();
                             break;
@@ -362,6 +369,40 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         {
             Index = workspace.Billings.Length - 1
         };
+    }
+
+    private ImportFileResult Handle(ImportFile q)
+    {
+        var data = CreditAgricoleReader.ReadFile(q.Input.FilePath);
+
+        import = new()
+        {
+            Lines = data.Lines.Select(l =>
+            {
+                var amount = l.TrnAmt ?? throw new Exception("Amount is missing");
+                var date = l.DtPosted ?? throw new Exception("Date is missing");
+
+                var matchings = workspace.Billings
+                    .Where(n => Math.Abs(n.Amount - amount) < 0.0001m
+                        && n.ValuationDate >= date.AddDays(-5)
+                        && n.ValuationDate <= date.AddDays(5))
+                    .OrderByDescending(n => n.ValuationDate == date)
+                    .Select(n => n.Id)
+                    .ToArray() ?? [];
+
+                return new Models.Line()
+                {
+                    Id = l.FitId ?? throw new Exception("ID is missing"),
+                    Amount = amount,
+                    Date = date,
+                    Name = l.Name ?? "???",
+                    Matchings = matchings,
+                    SelectedIndex = matchings.Length > 0 ? 0 : -1
+                };
+            }).ToArray()
+        };
+
+        //todo ARNAUD: à continuer
     }
 
     private ListBillingsResult Handle(ListBillings _)

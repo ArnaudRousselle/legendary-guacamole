@@ -1,4 +1,3 @@
-//ShowProjection
 using LegendaryGuacamole.Models.Common;
 using LegendaryGuacamole.Models.Dtos;
 using LegendaryGuacamole.WebApi.Channels;

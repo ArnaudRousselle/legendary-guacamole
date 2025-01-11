@@ -2,12 +2,12 @@ using LegendaryGuacamole.Models.Common;
 
 namespace LegendaryGuacamole.Models.Dtos;
 
-public class ImportFileInput
+public class ShowImportInput
 {
-    public required string FilePath { get; set; }
+    public string FilePath { get; set; } = "";
 }
 
-public class ImportFileOutput
+public class ShowImportOutput
 {
     public class ImportLine
     {

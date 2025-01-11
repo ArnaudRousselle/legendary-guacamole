@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Commons;
+using LegendaryGuacamole.WebApi.Extensions;
 using LegendaryGuacamole.WebApi.Queries;
 
 namespace LegendaryGuacamole.WebApi.Services;
@@ -120,9 +121,15 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         case ListRepetitiveBillings q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case MatchBilling q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         case MultipleInsertNextBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             Save();
+                            break;
+                        case ShowImport q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
                         case ShowProjection q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
@@ -418,6 +425,21 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         return new();
     }
 
+    private MatchBillingResult Handle(MatchBilling q)
+    {
+        if (import == null)
+            throw new Exception("no import");
+
+        var index = import.Lines.FindIndexWithPredicate(l => l.Id == q.Input.ImportLineId);
+
+        if (index < 0)
+            throw new Exception("line not found");
+
+        //todo ARNAUD: à continuer
+
+        return new();
+    }
+
     private MultipleInsertNextBillingResult Handle(MultipleInsertNextBilling q)
     {
         var maxDate = q.Input.MaxDate.ToDateOnly();
@@ -474,7 +496,18 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         };
     }
 
-    private ShowProjectionResult Handle(ShowProjection q)
+    private ShowImportResult Handle(ShowImport _)
+    {
+        return new()
+        {
+            Import = import ?? new()
+            {
+                Lines = []
+            }
+        };
+    }
+
+    private ShowProjectionResult Handle(ShowProjection _)
     {
         return new();
     }

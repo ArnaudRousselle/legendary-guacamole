@@ -4,16 +4,16 @@ using LegendaryGuacamole.WebApi.Models;
 
 namespace LegendaryGuacamole.WebApi.Queries;
 
-public class ImportFile : WorkspaceQuery<ImportFileInput, ImportFileResult, ImportFileOutput>
+public class ShowImport : WorkspaceQuery<ShowImportInput, ShowImportResult, ShowImportOutput>
 {
-    public override ImportFileOutput Map(Workspace workspace, ImportFileResult result)
+    public override ShowImportOutput Map(Workspace workspace, ShowImportResult result)
     => new()
     {
         Tuples = result.Import.Lines
                 .Select(l =>
                 {
                     var currentBilling = l.SelectedIndex >= 0 ? workspace.Billings[l.SelectedIndex] : null;
-                    return new ImportFileOutput.Tuple
+                    return new ShowImportOutput.Tuple
                     {
                         ImportLine = new()
                         {
@@ -28,7 +28,7 @@ public class ImportFile : WorkspaceQuery<ImportFileInput, ImportFileResult, Impo
                             }
                         },
                         CurrentBilling = currentBilling != null
-                        ? new ImportFileOutput.Billing
+                        ? new ShowImportOutput.Billing
                         {
                             BillingId = currentBilling.Id,
                             Title = currentBilling.Title,
@@ -47,7 +47,7 @@ public class ImportFile : WorkspaceQuery<ImportFileInput, ImportFileResult, Impo
     };
 }
 
-public class ImportFileResult
+public class ShowImportResult
 {
     public required Import Import { get; init; }
 }

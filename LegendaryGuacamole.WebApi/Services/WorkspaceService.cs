@@ -131,6 +131,9 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         case ShowImport q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
+                        case ShowImportLineDetail q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            break;
                         case ShowProjection q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             break;
@@ -395,7 +398,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                         && n.ValuationDate <= date.AddDays(5))
                     .OrderByDescending(n => n.ValuationDate == date)
                     .Select(n => n.Id)
-                    .ToArray();
+                    .ToImmutableArray();
 
                 return new Models.Line()
                 {
@@ -435,7 +438,40 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         if (index < 0)
             throw new Exception("line not found");
 
-        //todo ARNAUD: à continuer
+        var billingIndex = workspace.Billings.FindIndexWithPredicate(b => b.Id == q.Input.BillingId);
+
+        if (billingIndex < 0)
+            throw new Exception("billing not found");
+
+        var importLine = import.Lines[index];
+
+        if (q.Input.BillingId.HasValue)
+        {
+            var newSelectedIndex = importLine.Matchings.IndexOf(q.Input.BillingId.Value);
+            if (newSelectedIndex < 0)
+                importLine = importLine with
+                {
+                    Matchings = importLine.Matchings.Add(q.Input.BillingId.Value),
+                    SelectedIndex = importLine.Matchings.Length
+                };
+            else
+                importLine = importLine with
+                {
+                    SelectedIndex = newSelectedIndex
+                };
+        }
+        else
+            importLine = importLine with
+            {
+                SelectedIndex = -1
+            };
+
+        import = import with
+        {
+            Lines = import.Lines
+                .RemoveAt(index)
+                .Insert(index, importLine)
+        };
 
         return new();
     }
@@ -504,6 +540,23 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
             {
                 Lines = []
             }
+        };
+    }
+
+    private ShowImportLineDetailResult Handle(ShowImportLineDetail q)
+    {
+        if (import == null)
+            throw new Exception("no import");
+
+        var index = import.Lines.FindIndexWithPredicate(l => l.Id == q.Input.ImportLineId);
+
+        if (index < 0)
+            throw new Exception("line not found");
+
+        return new()
+        {
+            Import = import,
+            Index = index
         };
     }
 

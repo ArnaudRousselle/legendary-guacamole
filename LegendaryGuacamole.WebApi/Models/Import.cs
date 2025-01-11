@@ -13,6 +13,6 @@ public record Line
     public required string Name { get; init; }
     public required decimal Amount { get; init; }
     public required DateOnly Date { get; init; }
-    public required Guid[] Matchings { get; init; }
+    public required ImmutableArray<Guid> Matchings { get; init; }
     public required int SelectedIndex { get; init; }
 }

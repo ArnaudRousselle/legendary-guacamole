@@ -62,7 +62,7 @@ public abstract class WorkspaceQuery<TInput, TResult, TOutput> : IWorkspaceQuery
         get => ReadResponse();
     }
 
-    public abstract TOutput Map(Workspace workspace, TResult evt);
+    public abstract TOutput Map(Workspace workspace, TResult result);
 
     private async Task<TOutput> ReadResponse()
     {

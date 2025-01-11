@@ -13,7 +13,7 @@ public class ShowProjection : WorkspaceQuery<ShowProjectionInput, ShowProjection
         public required DateOnly Date { get; set; }
     }
 
-    public override ShowProjectionOutput Map(Workspace workspace, ShowProjectionResult evt)
+    public override ShowProjectionOutput Map(Workspace workspace, ShowProjectionResult result)
     {
         var now = DateOnly.FromDateTime(DateTime.Now);
         var maxDate = now.AddMonths(2);

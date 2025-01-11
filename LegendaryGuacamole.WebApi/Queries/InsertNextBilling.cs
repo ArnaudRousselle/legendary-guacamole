@@ -6,10 +6,10 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class InsertNextBilling : WorkspaceQuery<InsertNextBillingInput, InsertNextBillingResult, InsertNextBillingOutput>
 {
-    public override InsertNextBillingOutput Map(Workspace workspace, InsertNextBillingResult evt)
+    public override InsertNextBillingOutput Map(Workspace workspace, InsertNextBillingResult result)
     => new()
     {
-        BillingId = workspace.Billings[evt.Index].Id
+        BillingId = workspace.Billings[result.Index].Id
     };
 }
 

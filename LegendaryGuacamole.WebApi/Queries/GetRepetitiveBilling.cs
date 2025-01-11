@@ -6,9 +6,9 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class GetRepetitiveBilling : WorkspaceQuery<GetRepetitiveBillingInput, GetRepetitiveBillingResult, GetRepetitiveBillingOutput>
 {
-    public override GetRepetitiveBillingOutput Map(Workspace workspace, GetRepetitiveBillingResult evt)
+    public override GetRepetitiveBillingOutput Map(Workspace workspace, GetRepetitiveBillingResult result)
     {
-        var repetitiveBilling = workspace.RepetitiveBillings[evt.Index];
+        var repetitiveBilling = workspace.RepetitiveBillings[result.Index];
         return new()
         {
             Id = repetitiveBilling.Id,

@@ -6,7 +6,7 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class EditRepetitiveBilling : WorkspaceQuery<EditRepetitiveBillingInput, EditRepetitiveBillingResult, EditRepetitiveBillingOutput>
 {
-    public override EditRepetitiveBillingOutput Map(Workspace workspace, EditRepetitiveBillingResult evt)
+    public override EditRepetitiveBillingOutput Map(Workspace workspace, EditRepetitiveBillingResult result)
     => new();
 }
 

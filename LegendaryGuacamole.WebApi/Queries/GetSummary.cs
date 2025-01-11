@@ -6,7 +6,7 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class GetSummary : WorkspaceQuery<GetSummaryInput, GetSummaryResult, GetSummaryOutput>
 {
-    public override GetSummaryOutput Map(Workspace workspace, GetSummaryResult evt)
+    public override GetSummaryOutput Map(Workspace workspace, GetSummaryResult result)
     => new()
     {
         Amount = workspace.Billings

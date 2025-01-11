@@ -399,10 +399,13 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                     Matchings = matchings,
                     SelectedIndex = matchings.Length > 0 ? 0 : -1
                 };
-            }).ToArray()
+            }).ToImmutableArray()
         };
 
-        //todo ARNAUD: à continuer
+        return new()
+        {
+            Import = import
+        };
     }
 
     private ListBillingsResult Handle(ListBillings _)

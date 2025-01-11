@@ -6,7 +6,7 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class ListBillings : WorkspaceQuery<ListBillingsInput, ListBillingsResult, ListBillingsOutput>
 {
-    public override ListBillingsOutput Map(Workspace workspace, ListBillingsResult evt)
+    public override ListBillingsOutput Map(Workspace workspace, ListBillingsResult result)
     => new()
     {
         Items = workspace.Billings

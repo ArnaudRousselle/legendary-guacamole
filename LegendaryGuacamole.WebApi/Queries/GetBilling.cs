@@ -6,9 +6,9 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class GetBilling : WorkspaceQuery<GetBillingInput, GetBillingResult, GetBillingOutput>
 {
-    public override GetBillingOutput Map(Workspace workspace, GetBillingResult evt)
+    public override GetBillingOutput Map(Workspace workspace, GetBillingResult result)
     {
-        var billing = workspace.Billings[evt.Index];
+        var billing = workspace.Billings[result.Index];
         return new()
         {
             Id = billing.Id,

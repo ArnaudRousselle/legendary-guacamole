@@ -6,7 +6,7 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class ListRepetitiveBillings : WorkspaceQuery<ListRepetitiveBillingsInput, ListRepetitiveBillingsResult, ListRepetitiveBillingsOutput>
 {
-    public override ListRepetitiveBillingsOutput Map(Workspace workspace, ListRepetitiveBillingsResult evt)
+    public override ListRepetitiveBillingsOutput Map(Workspace workspace, ListRepetitiveBillingsResult result)
     => new()
     {
         Items = workspace.RepetitiveBillings

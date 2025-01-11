@@ -6,7 +6,7 @@ namespace LegendaryGuacamole.WebApi.Queries;
 
 public class DeleteBilling : WorkspaceQuery<DeleteBillingInput, DeleteBillingResult, DeleteBillingOutput>
 {
-    public override DeleteBillingOutput Map(Workspace workspace, DeleteBillingResult evt)
+    public override DeleteBillingOutput Map(Workspace workspace, DeleteBillingResult result)
     => new();
 }
 

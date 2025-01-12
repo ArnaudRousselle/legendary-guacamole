@@ -416,15 +416,15 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         if (index < 0)
             throw new Exception("line not found");
 
-        var billingIndex = workspace.Billings.FindIndexWithPredicate(b => b.Id == q.Input.BillingId);
-
-        if (billingIndex < 0)
-            throw new Exception("billing not found");
-
         var importLine = import.Lines[index];
 
         if (q.Input.BillingId.HasValue)
         {
+            var billingIndex = workspace.Billings.FindIndexWithPredicate(b => b.Id == q.Input.BillingId);
+
+            if (billingIndex < 0)
+                throw new Exception("billing not found");
+
             var newSelectedIndex = importLine.Matchings.IndexOf(q.Input.BillingId.Value);
             if (newSelectedIndex < 0)
                 importLine = importLine with
@@ -457,6 +457,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
     private MultipleInsertNextBillingResult Handle(MultipleInsertNextBilling q)
     {
         var maxDate = q.Input.MaxDate.ToDateOnly();
+
         var indexes = workspace.RepetitiveBillings
             .Where(b => b.NextValuationDate <= maxDate)
             .Select((_, i) => i)
@@ -470,35 +471,31 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
             var newId = Guid.NewGuid();
 
-            Models.Billing newBilling = new()
-            {
-                Id = newId,
-                Amount = repetitiveBilling.Amount,
-                Checked = false,
-                Comment = "",
-                IsSaving = repetitiveBilling.IsSaving,
-                Title = repetitiveBilling.Title,
-                ValuationDate = repetitiveBilling.NextValuationDate
-            };
-
-            var editedRepetitiveBilling = repetitiveBilling with
-            {
-                NextValuationDate = repetitiveBilling.Frequence switch
-                {
-                    LegendaryGuacamole.Models.Common.Frequence.Monthly => repetitiveBilling.NextValuationDate.AddMonths(1),
-                    LegendaryGuacamole.Models.Common.Frequence.Bimonthly => repetitiveBilling.NextValuationDate.AddMonths(2),
-                    LegendaryGuacamole.Models.Common.Frequence.Quaterly => repetitiveBilling.NextValuationDate.AddMonths(3),
-                    LegendaryGuacamole.Models.Common.Frequence.Annual => repetitiveBilling.NextValuationDate.AddMonths(12),
-                    _ => throw new NotImplementedException()
-                },
-            };
-
             newWorkspace = newWorkspace with
             {
-                Billings = newWorkspace.Billings.Add(newBilling),
+                Billings = newWorkspace.Billings.Add(new()
+                {
+                    Id = newId,
+                    Amount = repetitiveBilling.Amount,
+                    Checked = false,
+                    Comment = "",
+                    IsSaving = repetitiveBilling.IsSaving,
+                    Title = repetitiveBilling.Title,
+                    ValuationDate = repetitiveBilling.NextValuationDate
+                }),
                 RepetitiveBillings = newWorkspace.RepetitiveBillings
                     .RemoveAt(index)
-                    .Insert(index, repetitiveBilling),
+                    .Insert(index, repetitiveBilling with
+                    {
+                        NextValuationDate = repetitiveBilling.Frequence switch
+                        {
+                            LegendaryGuacamole.Models.Common.Frequence.Monthly => repetitiveBilling.NextValuationDate.AddMonths(1),
+                            LegendaryGuacamole.Models.Common.Frequence.Bimonthly => repetitiveBilling.NextValuationDate.AddMonths(2),
+                            LegendaryGuacamole.Models.Common.Frequence.Quaterly => repetitiveBilling.NextValuationDate.AddMonths(3),
+                            LegendaryGuacamole.Models.Common.Frequence.Annual => repetitiveBilling.NextValuationDate.AddMonths(12),
+                            _ => throw new NotImplementedException()
+                        },
+                    }),
             };
         }
 

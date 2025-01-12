@@ -22,12 +22,12 @@ Content-Type: application/json
 {
     "ValuationDate":
     {
-        "Day": 15,
-        "Month": 6,
-        "Year":2024
+        "Day": 6,
+        "Month": 1,
+        "Year":2025
     },
-    "Title": "Test 1",
-    "Amount": 200.54,
+    "Title": "Test CAF 2",
+    "Amount": 148.52,
     "Checked": false,
     "Comment": "commentaire",
     "IsSaving": true
@@ -150,9 +150,51 @@ Content-Type: application/json
 }
 
 ###
-MultipleInsertNextBilling
+POST {{apiUrl}}multipleInsertNextBilling
+Accept: application/json
+Content-Type: application/json
 
-ImportFile
-ShowImport
-MatchBilling
-ShowImportLineDetail
+{  
+    "MaxDate": 
+    {
+        "Day": 15,
+        "Month": 7,
+        "Year":2025
+    }
+}
+
+###
+POST {{apiUrl}}importFile
+Accept: application/json
+Content-Type: application/json
+
+{  
+    "FilePath": "C:\\Users\\thehe\\Downloads\\CA20250106_101507.ofx"
+}
+
+###
+POST {{apiUrl}}showImport
+Accept: application/json
+Content-Type: application/json
+
+{  
+}
+
+###
+POST {{apiUrl}}showImportLineDetail
+Accept: application/json
+Content-Type: application/json
+
+{
+    "ImportLineId": "7942250061535"
+}
+
+###
+POST {{apiUrl}}matchBilling
+Accept: application/json
+Content-Type: application/json
+
+{  
+    "ImportLineId": "7942250061535",
+    "BillingId": null
+}

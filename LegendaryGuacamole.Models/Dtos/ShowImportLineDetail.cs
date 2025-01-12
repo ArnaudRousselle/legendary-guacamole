@@ -11,6 +11,7 @@ public class ShowImportLineDetailOutput
 {
     public class Billing
     {
+        public required Guid Id { get; set; }
         public required ShortDate ValuationDate { get; set; }
         public required string Title { get; set; }
     }

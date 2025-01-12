@@ -26,6 +26,7 @@ public class ShowImportLineDetail : WorkspaceQuery<ShowImportLineDetailInput, Sh
                     var billing = workspace.Billings.First(b => b.Id == billingId);
                     return new ShowImportLineDetailOutput.Billing
                     {
+                        Id = billing.Id,
                         Title = billing.Title,
                         ValuationDate = new()
                         {

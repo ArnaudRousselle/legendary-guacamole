@@ -12,7 +12,9 @@ public class ShowImport : WorkspaceQuery<ShowImportInput, ShowImportResult, Show
         Tuples = result.Import.Lines
                 .Select(l =>
                 {
-                    var currentBilling = l.SelectedIndex >= 0 ? workspace.Billings[l.SelectedIndex] : null;
+                    var currentBilling = l.SelectedIndex >= 0
+                        ? workspace.Billings.First(b => b.Id == l.Matchings[l.SelectedIndex])
+                        : null;
                     return new ShowImportOutput.Tuple
                     {
                         ImportLine = new()

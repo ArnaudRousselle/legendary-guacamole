@@ -17,7 +17,7 @@ public static class CreditAgricoleReader
         string currentAccountId = string.Empty;
         var creditCardData = false;
 
-        using StreamReader reader = new(File.OpenRead(path), Encoding.GetEncoding(1252));
+        using StreamReader reader = new(File.OpenRead(path), Encoding.UTF8);
         string? line;
 
         while ((line = reader.ReadLine()) != null)

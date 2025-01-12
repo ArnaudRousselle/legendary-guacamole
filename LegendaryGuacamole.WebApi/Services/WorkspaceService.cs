@@ -223,16 +223,17 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
                 var billing = newWorkspace.Billings[billingIndex];
 
-                if (!billing.Checked)
-                    newWorkspace = newWorkspace with
-                    {
-                        Billings = newWorkspace.Billings
-                                .RemoveAt(billingIndex)
-                                .Insert(billingIndex, billing with
-                                {
-                                    Checked = true
-                                })
-                    };
+                newWorkspace = newWorkspace with
+                {
+                    Billings = newWorkspace.Billings
+                            .RemoveAt(billingIndex)
+                            .Insert(billingIndex, billing with
+                            {
+                                ValuationDate = line.Date,
+                                Checked = true,
+                                Amount = line.Amount
+                            })
+                };
             }
         }
 

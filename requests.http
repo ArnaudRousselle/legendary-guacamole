@@ -26,7 +26,7 @@ Content-Type: application/json
         "Month": 1,
         "Year":2025
     },
-    "Title": "Test CAF 2",
+    "Title": "AAAAA",
     "Amount": 148.52,
     "Checked": false,
     "Comment": "commentaire",
@@ -186,7 +186,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "ImportLineId": "7942250061535"
+    "ImportLineId": "7921312045222"
 }
 
 ###
@@ -195,8 +195,8 @@ Accept: application/json
 Content-Type: application/json
 
 {  
-    "ImportLineId": "7942250061535",
-    "BillingId": null
+    "ImportLineId": "7921312045222",
+    "BillingId": "23b389c2-c7b8-4d4b-a28b-57176c947725"
 }
 
 ###

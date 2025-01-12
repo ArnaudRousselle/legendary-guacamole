@@ -5,7 +5,13 @@ POST {{apiUrl}}listBillings
 Accept: application/json
 Content-Type: application/json
 
-{    
+{   
+    "StartDate": null,
+    "EndDate":null,
+    "Amount": null,
+    "DeltaAmount": null,
+    "Title": null,
+    "WithChecked": null
 }
 
 ###
@@ -25,4 +31,19 @@ Content-Type: application/json
     "Checked": false,
     "Comment": "commentaire",
     "IsSaving": true
+}
+
+###
+POST {{apiUrl}}editBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "22c07430-b4d2-456c-aabc-8b741e49ec08",
+    "ValuationDate": null,
+    "Title": "Test 2",
+    "Amount": 112.11,
+    "Checked": null,
+    "Comment": null,
+    "IsSaving": null
 }

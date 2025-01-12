@@ -8,6 +8,15 @@ HttpClient httpClient = new()
 
 RootCommand rootCommand = new("Gestion des finances personnelles");
 
+//todo ARNAUD: à faire
+//CommitImport
+//GetBilling
+//GetRepetitiveBilling
+//ImportFile
+//MatchBilling
+//ShowImport
+//ShowImportLineDetail
+
 List<ConsoleCommand> commands = [
     new PrintBilling(),
     new PrintRepetitiveBilling(),

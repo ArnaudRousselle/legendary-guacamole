@@ -11,7 +11,7 @@ Content-Type: application/json
     "Amount": null,
     "DeltaAmount": null,
     "Title": null,
-    "WithChecked": null
+    "WithChecked": true
 }
 
 ###
@@ -197,4 +197,12 @@ Content-Type: application/json
 {  
     "ImportLineId": "7942250061535",
     "BillingId": null
+}
+
+###
+POST {{apiUrl}}commitImport
+Accept: application/json
+Content-Type: application/json
+
+{  
 }

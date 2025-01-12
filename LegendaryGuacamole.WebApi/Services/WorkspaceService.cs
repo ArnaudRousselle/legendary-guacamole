@@ -64,6 +64,10 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             Save();
                             break;
+                        case CommitImport q:
+                            await q.OnSuccess(ToQueryResponse(Handle(q)));
+                            Save();
+                            break;
                         case DeleteBilling q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
                             Save();
@@ -95,7 +99,6 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
                             break;
                         case ImportFile q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
-                            Save();
                             break;
                         case ListBillings q:
                             await q.OnSuccess(ToQueryResponse(Handle(q)));
@@ -180,6 +183,65 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         return new()
         {
             Index = workspace.RepetitiveBillings.Length - 1
+        };
+    }
+
+    private CommitImportResult Handle(CommitImport q)
+    {
+        if (import == null)
+            throw new Exception("no import");
+
+        var newWorkspace = workspace;
+        List<int> indexes = [];
+
+        foreach (var line in import.Lines)
+        {
+            if (line.SelectedIndex < 0)
+            {
+                newWorkspace = newWorkspace with
+                {
+                    Billings = newWorkspace.Billings.Add(new()
+                    {
+                        Id = Guid.NewGuid(),
+                        Amount = line.Amount,
+                        Checked = true,
+                        Comment = "",
+                        IsSaving = false,
+                        Title = line.Name,
+                        ValuationDate = line.Date
+                    })
+                };
+                indexes.Add(newWorkspace.Billings.Length - 1);
+            }
+            else
+            {
+                var billingId = line.Matchings[line.SelectedIndex];
+                var billingIndex = newWorkspace.Billings.FindIndexWithPredicate(b => b.Id == billingId);
+
+                if (billingIndex < 0)
+                    throw new Exception("billing not found: " + billingId);
+
+                var billing = newWorkspace.Billings[billingIndex];
+
+                if (!billing.Checked)
+                    newWorkspace = newWorkspace with
+                    {
+                        Billings = newWorkspace.Billings
+                                .RemoveAt(billingIndex)
+                                .Insert(billingIndex, billing with
+                                {
+                                    Checked = true
+                                })
+                    };
+            }
+        }
+
+        import = null;
+        workspace = newWorkspace;
+
+        return new()
+        {
+            Indexes = [.. indexes]
         };
     }
 

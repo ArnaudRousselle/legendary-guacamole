@@ -27,7 +27,7 @@ Content-Type: application/json
         "Year":2024
     },
     "Title": "Test 1",
-    "Amount": 65.54,
+    "Amount": 200.54,
     "Checked": false,
     "Comment": "commentaire",
     "IsSaving": true
@@ -43,7 +43,116 @@ Content-Type: application/json
     "ValuationDate": null,
     "Title": "Test 2",
     "Amount": 112.11,
-    "Checked": null,
+    "Checked": true,
     "Comment": null,
     "IsSaving": null
 }
+
+###
+POST {{apiUrl}}deleteBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "a4f7e6a4-de68-4238-9ddf-a96db7a786ce"
+}
+
+###
+POST {{apiUrl}}getBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "14fd77b4-b3c4-429c-8f7a-8662a7f50936"
+}
+
+###
+POST {{apiUrl}}listRepetitiveBillings
+Accept: application/json
+Content-Type: application/json
+
+{   
+}
+
+###
+POST {{apiUrl}}addRepetitiveBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "NextValuationDate":
+    {
+        "Day": 15,
+        "Month": 2,
+        "Year":2025
+    },
+    "Title": "Répétition 2",
+    "Amount": 65.54,
+    "IsSaving": true,
+    "Frequence": 2
+}
+
+###
+POST {{apiUrl}}editRepetitiveBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "790d257f-9526-4558-afa0-5a229ddde6c8",
+    "NextValuationDate": null,
+    "Title": "Répétition éditée 3",
+    "Amount": null,
+    "IsSaving": null,
+    "Frequence": 3
+}
+
+###
+POST {{apiUrl}}deleteRepetitiveBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "790d257f-9526-4558-afa0-5a229ddde6c8"
+}
+
+###
+POST {{apiUrl}}getRepetitiveBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "f0a93daa-14cf-41d4-8840-773c9280806b"
+}
+
+###
+POST {{apiUrl}}getSummary
+Accept: application/json
+Content-Type: application/json
+
+{   
+}
+
+###
+POST {{apiUrl}}showProjection
+Accept: application/json
+Content-Type: application/json
+
+{   
+}
+
+###
+POST {{apiUrl}}insertNextBilling
+Accept: application/json
+Content-Type: application/json
+
+{  
+    "RepetitiveBillingId": "f0a93daa-14cf-41d4-8840-773c9280806b" 
+}
+
+###
+MultipleInsertNextBilling
+
+ImportFile
+ShowImport
+MatchBilling
+ShowImportLineDetail

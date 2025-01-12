@@ -50,14 +50,23 @@ public class ShowProjection : WorkspaceQuery<ShowProjectionInput, ShowProjection
         }
 
         var total = billings
-            .Where(n => n.Date < now)
+            .Where(n => n.Date <= now)
             .Select(n => n.Amount)
             .Sum();
 
-        List<ShowProjectionOutput.Item> res = [];
+        List<ShowProjectionOutput.Item> res = [new()
+            {
+                Amount = total,
+                ValuationDate = new()
+                {
+                    Day = now.Day,
+                    Month = now.Month,
+                    Year = now.Year
+                }
+            }];
 
         foreach (var date in billings
-            .Where(n => n.Date >= now)
+            .Where(n => n.Date > now)
             .Select(n => n.Date)
             .Distinct()
             .OrderBy(n => n))

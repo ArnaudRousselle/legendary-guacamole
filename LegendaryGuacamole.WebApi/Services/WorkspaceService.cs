@@ -37,25 +37,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
         const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
 
         if (!File.Exists(fileName))
-        {
-            //todo ARNAUD: à supprimer
-            for (var i = 0; i < 100; i++)
-                workspace = workspace with
-                {
-                    Billings = workspace.Billings.Add(new()
-                    {
-                        Id = Guid.NewGuid(),
-                        Amount = i + 1.45m,
-                        Checked = i % 5 == 0,
-                        Title = "Mon titre " + i,
-                        Comment = i % 3 == 0 ? "mon commentaire " + i : "",
-                        ValuationDate = new DateOnly(2024, 10, 12),
-                        IsSaving = false
-                    })
-                };
-
             Save();
-        }
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {

@@ -484,3 +484,4 @@ $RECYCLE.BIN/
 *.swp
 
 package-lock.json
+data.lgc

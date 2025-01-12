@@ -1,0 +1,28 @@
+@apiUrl = http://localhost:5152/
+
+###
+POST {{apiUrl}}listBillings
+Accept: application/json
+Content-Type: application/json
+
+{    
+}
+
+###
+POST {{apiUrl}}addBilling
+Accept: application/json
+Content-Type: application/json
+
+{
+    "ValuationDate":
+    {
+        "Day": 15,
+        "Month": 6,
+        "Year":2024
+    },
+    "Title": "Test 1",
+    "Amount": 65.54,
+    "Checked": false,
+    "Comment": "commentaire",
+    "IsSaving": true
+}

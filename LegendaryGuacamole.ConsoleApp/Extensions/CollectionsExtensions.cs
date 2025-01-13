@@ -53,7 +53,7 @@ public static class CollectionsExtensions
                     }
                     else if (keyInfo.Key == ConsoleKey.Escape)
                     {
-                        Console.WriteLine(" ");
+                        Console.Clear();
                         return;
                     }
                     else

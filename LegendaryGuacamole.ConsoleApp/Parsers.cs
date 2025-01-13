@@ -94,4 +94,20 @@ public static class Parsers
                 }
         }
     };
+
+    public static ParseArgument<FileInfo> FileInfoParser => result =>
+    {
+        if (result.Tokens.Count == 0)
+        {
+            return null!;
+        }
+        var filePath = result.Tokens.Single().Value;
+        if (!File.Exists(filePath))
+        {
+            result.ErrorMessage = "Le fichier n'existe pas";
+            return null!;
+        }
+        else
+            return new FileInfo(filePath);
+    };
 }

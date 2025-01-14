@@ -1,24 +1,20 @@
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Extensions;
 using LegendaryGuacamole.WebApi.Services;
+using LegendaryGuacamole.Models.Settings;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var builder = WebApplication.CreateBuilder();
 
 WorkspaceChannel channel = new();
+var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("settings.json")) ?? throw new Exception("settings error");
 
+builder.Services.AddWindowsService();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton(channel);
+builder.Services.AddSingleton(webApiSettings);
 builder.Services.AddHostedService<WorkspaceService>();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 AppDomain.CurrentDomain
     .GetAssemblies()
@@ -40,4 +36,4 @@ AppDomain.CurrentDomain
             .Invoke(null, [app, queryType.Name, channel]);
     });
 
-app.Run();
+app.Run($"http://localhost:{webApiSettings.Port}");

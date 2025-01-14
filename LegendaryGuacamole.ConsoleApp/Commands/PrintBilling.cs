@@ -30,7 +30,7 @@ public class PrintBilling : ConsoleCommand
             {
                 Console.WriteLine("Titre       : " + output.Title);
                 Console.WriteLine("Date        : " + output.ValuationDate.ToDateOnly().ToString("dd/MM/yyyy"));
-                Console.WriteLine("Montant     : " + output.Amount.ToString("######.00"));
+                Console.WriteLine("Montant     : " + output.Amount.ToString("#######.00"));
                 Console.WriteLine("Pointée     : " + (output.Checked ? "Oui" : "Non"));
                 Console.WriteLine("Economies   : " + (output.IsSaving ? "Oui" : "Non"));
                 Console.WriteLine("Commentaire : " + output.Comment);

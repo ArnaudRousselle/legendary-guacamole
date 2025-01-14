@@ -30,7 +30,7 @@ public class PrintRepetitiveBilling : ConsoleCommand
             await response.ContinueWithAsync<GetRepetitiveBillingOutput>(output =>
             {
                 Console.WriteLine("Titre     : " + output.Title);
-                Console.WriteLine("Montant   : " + output.Amount.ToString("######.00"));
+                Console.WriteLine("Montant   : " + output.Amount.ToString("#######.00"));
                 Console.WriteLine("Economies : " + (output.IsSaving ? "Oui" : "Non"));
                 Console.WriteLine("Pro. Date : " + output.NextValuationDate.ToDateOnly().ToString("dd/MM/yyyy"));
                 Console.WriteLine("Fréquence : " + (output.Frequence == Frequence.Monthly ? "Mensuel" : output.Frequence == Frequence.Bimonthly ? "Bimestriel" : output.Frequence == Frequence.Quaterly ? "Trimestriel" : output.Frequence == Frequence.Annual ? "Annuel" : "??"));

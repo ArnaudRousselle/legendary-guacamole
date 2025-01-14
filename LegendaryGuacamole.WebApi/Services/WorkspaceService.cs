@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
+using LegendaryGuacamole.Models.Settings;
 using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Commons;
 using LegendaryGuacamole.WebApi.Extensions;
@@ -8,8 +9,9 @@ using LegendaryGuacamole.WebApi.Queries;
 
 namespace LegendaryGuacamole.WebApi.Services;
 
-public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService> logger)
-    : BackgroundService
+public class WorkspaceService(WorkspaceChannel channel,
+    WebApiSettings settings,
+    ILogger<WorkspaceService> logger) : BackgroundService
 {
     private Models.Workspace workspace = new()
     {
@@ -23,20 +25,17 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
     private void Save()
     {
-        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
         var json = JsonSerializer.Serialize(workspace, new JsonSerializerOptions
         {
             WriteIndented = true
         });
-        File.WriteAllText(fileName, json);
+        File.WriteAllText(settings.FilePath, json);
         _lastFileAccess = DateTime.Now;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        const string fileName = "./data.lgc";//todo ARNAUD: à rendre paramétrable
-
-        if (!File.Exists(fileName))
+        if (!File.Exists(settings.FilePath))
             Save();
 
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
@@ -48,7 +47,7 @@ public class WorkspaceService(WorkspaceChannel channel, ILogger<WorkspaceService
 
                 if (DateTime.Now - _lastFileAccess >= TimeSpan.FromMinutes(5))
                 {
-                    workspace = JsonSerializer.Deserialize<Models.Workspace>(File.ReadAllText(fileName))!;
+                    workspace = JsonSerializer.Deserialize<Models.Workspace>(File.ReadAllText(settings.FilePath))!;
                     _lastFileAccess = DateTime.Now;
                 }
 

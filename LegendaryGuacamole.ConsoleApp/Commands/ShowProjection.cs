@@ -26,10 +26,10 @@ public class ShowProjection : ConsoleCommand
             {
                 output.Items.ToPage(pageSize ?? 20, items =>
                 {
-                    Console.WriteLine($"| {"Date".FillRight(10)} | {"Montant".FillRight(9)} |");
+                    Console.WriteLine($"| {"Date".FillRight(10)} | {"Montant".FillRight(10)} |");
                     items.ForEach(l =>
                     {
-                        Console.WriteLine($"| {l.ValuationDate.ToDateOnly():dd/MM/yyyy} | {l.Amount.ToString("######.00").FillLeft(9)} ||");
+                        Console.WriteLine($"| {l.ValuationDate.ToDateOnly():dd/MM/yyyy} | {l.Amount.ToString("#######.00").FillLeft(10)} ||");
                         Console.ResetColor();
                     });
                 });

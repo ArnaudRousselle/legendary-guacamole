@@ -1,12 +1,15 @@
 ﻿using System.CommandLine;
 using LegendaryGuacamole.ConsoleApp.Commands;
 
+//todo ARNAUD: faire la configuration
 HttpClient httpClient = new()
 {
     BaseAddress = new("http://localhost:5152/")
 };
 
 RootCommand rootCommand = new("Gestion des finances personnelles");
+
+//todo ARNAUD: ajouter une commande d'installation
 
 List<ConsoleCommand> commands = [
     new PrintBilling(),

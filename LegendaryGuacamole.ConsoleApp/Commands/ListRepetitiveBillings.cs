@@ -27,10 +27,10 @@ public class ListRepetitiveBillings : ConsoleCommand
             {
                 output.Items.ToPage(pageSize ?? 20, items =>
                 {
-                    Console.WriteLine($"| {"N°".FillRight(36)} | {"Date".FillRight(10)} | {"Titre".FillRight(30)} | {"Montant".FillRight(9)} | Eco | Freq |");
+                    Console.WriteLine($"| {"N°".FillRight(36)} | {"Date".FillRight(10)} | {"Titre".FillRight(30)} | {"Montant".FillRight(10)} | Eco | Freq |");
                     items.ForEach(l =>
                     {
-                        Console.WriteLine($"| {l.Id} | {l.NextValuationDate.ToDateOnly():dd/MM/yyyy} | {l.Title.FillRight(30)} | {l.Amount.ToString("######.00").FillLeft(9)} |  {(l.IsSaving ? "x" : " ")}  |  {(l.Frequence == Frequence.Monthly ? "1m" : l.Frequence == Frequence.Bimonthly ? "2m" : l.Frequence == Frequence.Quaterly ? "3m" : l.Frequence == Frequence.Annual ? "1y" : "??")}  |");
+                        Console.WriteLine($"| {l.Id} | {l.NextValuationDate.ToDateOnly():dd/MM/yyyy} | {l.Title.FillRight(30)} | {l.Amount.ToString("#######.00").FillLeft(10)} |  {(l.IsSaving ? "x" : " ")}  |  {(l.Frequence == Frequence.Monthly ? "1m" : l.Frequence == Frequence.Bimonthly ? "2m" : l.Frequence == Frequence.Quaterly ? "3m" : l.Frequence == Frequence.Annual ? "1y" : "??")}  |");
                         Console.ResetColor();
                     });
                 });

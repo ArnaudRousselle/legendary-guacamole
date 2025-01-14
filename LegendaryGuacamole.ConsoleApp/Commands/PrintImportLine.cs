@@ -28,7 +28,7 @@ public class PrintImportLine : ConsoleCommand
             {
                 Console.WriteLine("Titre   : " + output.Title);
                 Console.WriteLine("Date    : " + output.Date.ToDateOnly().ToString("dd/MM/yyyy"));
-                Console.WriteLine("Montant : " + output.Amount.ToString("######.00"));
+                Console.WriteLine("Montant : " + output.Amount.ToString("#######.00"));
 
                 if (output.Candidates.Length == 0)
                 {

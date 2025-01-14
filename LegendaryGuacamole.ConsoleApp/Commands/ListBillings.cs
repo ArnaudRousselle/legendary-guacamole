@@ -48,12 +48,12 @@ public class ListBillings : ConsoleCommand
             {
                 output.Items.ToPage(pageSize ?? 20, items =>
                 {
-                    Console.WriteLine($"| {"N°".FillRight(36)} | {"Date".FillRight(10)} | {"Titre".FillRight(30)} | {"Montant".FillRight(9)} | Eco | Com |");
+                    Console.WriteLine($"| {"N°".FillRight(36)} | {"Date".FillRight(10)} | {"Titre".FillRight(30)} | {"Montant".FillRight(10)} | Eco | Com |");
                     items.ForEach(l =>
                     {
                         if (l.Checked)
                             Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"| {l.Id} | {l.ValuationDate.ToDateOnly():dd/MM/yyyy} | {l.Title.FillRight(30)} | {l.Amount.ToString("######.00").FillLeft(9)} |  {(l.IsSaving ? "x" : " ")}  |  {(!string.IsNullOrWhiteSpace(l.Comment) ? "x" : " ")}  |");
+                        Console.WriteLine($"| {l.Id} | {l.ValuationDate.ToDateOnly():dd/MM/yyyy} | {l.Title.FillRight(30)} | {l.Amount.ToString("#######.00").FillLeft(10)} |  {(l.IsSaving ? "x" : " ")}  |  {(!string.IsNullOrWhiteSpace(l.Comment) ? "x" : " ")}  |");
                         Console.ResetColor();
                     });
                 });

@@ -38,10 +38,10 @@ public class ImportFile : ConsoleCommand
 
                 output.Tuples.ToPage(pageSize ?? 20, items =>
                 {
-                    Console.WriteLine($"| {"Ident.".FillRight(maxIdLength)} | {"Date".FillRight(10)} | {"Titre".FillRight(30)} | {"Montant".FillRight(9)} | {"Liaison".FillRight(30)} | Nb  |");
+                    Console.WriteLine($"| {"Ident.".FillRight(maxIdLength)} | {"Date".FillRight(10)} | {"Titre".FillRight(30)} | {"Montant".FillRight(10)} | {"Liaison".FillRight(30)} | Nb  |");
                     items.ForEach(l =>
                     {
-                        Console.WriteLine($"| {l.ImportLine.Id.FillRight(maxIdLength)} | {l.ImportLine.ValuationDate.ToDateOnly():dd/MM/yyyy} | {l.ImportLine.Title.FillRight(30)} | {l.ImportLine.Amount.ToString("######.00").FillLeft(9)} | {(l.CurrentBilling != null ? l.CurrentBilling.Title.FillRight(30) : " ".FillRight(30))} | {l.MatchingCount.ToString().FillLeft(3)} |");
+                        Console.WriteLine($"| {l.ImportLine.Id.FillRight(maxIdLength)} | {l.ImportLine.ValuationDate.ToDateOnly():dd/MM/yyyy} | {l.ImportLine.Title.FillRight(30)} | {l.ImportLine.Amount.ToString("#######.00").FillLeft(10)} | {(l.CurrentBilling != null ? l.CurrentBilling.Title.FillRight(30) : " ".FillRight(30))} | {l.MatchingCount.ToString().FillLeft(3)} |");
                         Console.ResetColor();
                     });
                 });

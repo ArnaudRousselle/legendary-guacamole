@@ -35,6 +35,7 @@ public class QueryResponse<T>
 
 public abstract class WorkspaceQuery<TInput, TResult, TOutput> : IWorkspaceQuery
 {
+    //todo ARNAUD: revoir la façon dont sont faites les queries : déplacer recherche de WorkspaceService vers Map
     public required TInput Input { get; set; }
 
     private Channel<QueryResponse<TResult>?> channel = Channel.CreateUnbounded<QueryResponse<TResult>?>(

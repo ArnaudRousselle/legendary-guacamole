@@ -8,10 +8,6 @@ HttpClient httpClient = new()
 
 RootCommand rootCommand = new("Gestion des finances personnelles");
 
-//todo ARNAUD: à faire
-//ShowImportLineDetail
-//MatchBilling
-
 List<ConsoleCommand> commands = [
     new PrintBilling(),
     new PrintRepetitiveBilling(),
@@ -29,7 +25,9 @@ List<ConsoleCommand> commands = [
     new ShowProjection(),
     new ImportFile(),
     new PrintImport(),
-    new CommitImport()
+    new CommitImport(),
+    new MatchBilling(),
+    new PrintImportLine()
 ];
 
 commands.ForEach(c => rootCommand.AddCommand(c.GetCommand(httpClient)));

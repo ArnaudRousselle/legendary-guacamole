@@ -61,6 +61,5 @@ public class AddBilling : ConsoleCommand
                 Console.WriteLine("Ajouté : " + output.Id);
             });
         }, amount, @checked, comment, saving, title, date);
-
     }
 }

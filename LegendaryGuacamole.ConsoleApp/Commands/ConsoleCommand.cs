@@ -12,7 +12,7 @@ public abstract class ConsoleCommand
 
     protected HttpClient GetHttpClient()
     {
-        var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("../settings.json")) ?? throw new Exception("settings error");
+        var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("settings.json")) ?? throw new Exception("settings error");
         return new()
         {
             BaseAddress = new($"http://localhost:{webApiSettings.Port}/")

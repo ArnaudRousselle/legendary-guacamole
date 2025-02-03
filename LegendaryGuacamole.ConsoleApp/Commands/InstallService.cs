@@ -41,9 +41,11 @@ public class InstallService : ConsoleCommand
                 Port = port
             };
 
-            File.WriteAllText("../settings.json", JsonSerializer.Serialize(settings));
+            File.WriteAllText("settings.json", JsonSerializer.Serialize(settings));
 
-            using var process = Process.Start("sc.exe", $"create {name} binPath= \"../webapi/LegendaryGuacamole.WebApi.exe\" start= delayed-auto");
+            var path = Path.GetFullPath("./webapi/LegendaryGuacamole.WebApi.exe");
+
+            using var process = Process.Start("sc.exe", $"create {name} binPath= \"{path}\" start= delayed-auto");
             process.WaitForExit();
         }, port, name, file);
     }

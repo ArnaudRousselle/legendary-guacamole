@@ -8,10 +8,10 @@ var builder = WebApplication.CreateBuilder();
 WorkspaceChannel channel = new();
 var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("../settings.json")) ?? throw new Exception("settings error");
 
-builder.Services.AddWindowsService();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton(channel);
 builder.Services.AddSingleton(webApiSettings);
+builder.Services.AddWindowsService();
 builder.Services.AddHostedService<WorkspaceService>();
 
 var app = builder.Build();

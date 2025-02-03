@@ -11,10 +11,12 @@ public class CommitImport : ConsoleCommand
 
     protected override string Description => "Valide l'import en cours";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         command.SetHandler(async () =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/commitImport",
                 new CommitImportInput());

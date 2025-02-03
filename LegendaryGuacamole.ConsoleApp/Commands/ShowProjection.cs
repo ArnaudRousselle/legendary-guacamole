@@ -11,13 +11,15 @@ public class ShowProjection : ConsoleCommand
 
     protected override string Description => "Affiche les valeurs futures";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Option<int?> pageSize = new(["--pageSize", "-p"], "nombre d'éléments par page");
         command.AddOption(pageSize);
 
         command.SetHandler(async (pageSize) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/showProjection",
                 new ShowProjectionInput());

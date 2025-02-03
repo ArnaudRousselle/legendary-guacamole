@@ -1,15 +1,7 @@
 ﻿using System.CommandLine;
 using LegendaryGuacamole.ConsoleApp.Commands;
 
-//todo ARNAUD: faire la configuration
-HttpClient httpClient = new()
-{
-    BaseAddress = new("http://localhost:5152/")
-};
-
 RootCommand rootCommand = new("Gestion des finances personnelles");
-
-//todo ARNAUD: ajouter une commande d'installation
 
 List<ConsoleCommand> commands = [
     new PrintBilling(),
@@ -30,10 +22,11 @@ List<ConsoleCommand> commands = [
     new PrintImport(),
     new CommitImport(),
     new MatchBilling(),
-    new PrintImportLine()
+    new PrintImportLine(),
+    new InstallService()
 ];
 
-commands.ForEach(c => rootCommand.AddCommand(c.GetCommand(httpClient)));
+commands.ForEach(c => rootCommand.AddCommand(c.GetCommand()));
 
 var exitCode = await rootCommand.InvokeAsync(args);
 

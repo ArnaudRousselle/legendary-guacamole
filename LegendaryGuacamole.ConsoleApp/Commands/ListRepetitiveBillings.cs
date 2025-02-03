@@ -12,13 +12,15 @@ public class ListRepetitiveBillings : ConsoleCommand
     protected override string Name => "listRepetitive";
     protected override string Description => "Affiche l'ensemble des lignes de l'échéancier";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Option<int?> pageSize = new(["--pageSize", "-p"], "nombre d'éléments par page");
         command.AddOption(pageSize);
 
         command.SetHandler(async (pageSize) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/listRepetitiveBillings",
                 new ListRepetitiveBillingsInput());

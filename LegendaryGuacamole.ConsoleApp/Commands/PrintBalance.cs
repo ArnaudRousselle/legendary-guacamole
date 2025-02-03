@@ -11,10 +11,12 @@ public class PrintBalance : ConsoleCommand
 
     protected override string Description => "Afficher le solde total pointé du compte";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         command.SetHandler(async (id) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/getSummary",
                 new GetSummaryInput());

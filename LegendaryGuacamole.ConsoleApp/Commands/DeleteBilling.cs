@@ -11,7 +11,7 @@ public class DeleteBilling : ConsoleCommand
 
     protected override string Description => "Supprime une ligne du compte";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<Guid> id = new("id", "Identifiant de la ligne");
 
@@ -19,6 +19,8 @@ public class DeleteBilling : ConsoleCommand
 
         command.SetHandler(async (id) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/deleteBilling",
                 new DeleteBillingInput

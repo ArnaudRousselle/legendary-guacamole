@@ -12,7 +12,7 @@ public class MultipleInsertNextBilling : ConsoleCommand
 
     protected override string Description => "Insérer une ligne de compte à partir de l'échéancier";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<ShortDate> maxDate = new("maxDate", Parsers.ShortDateParser, false, "Date");
 
@@ -20,6 +20,8 @@ public class MultipleInsertNextBilling : ConsoleCommand
 
         command.SetHandler(async (maxDate) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/multipleInsertNextBilling",
                 new MultipleInsertNextBillingInput

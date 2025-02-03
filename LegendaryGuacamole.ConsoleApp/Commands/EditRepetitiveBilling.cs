@@ -12,7 +12,7 @@ public class EditRepetitiveBilling : ConsoleCommand
 
     protected override string Description => "Editer une ligne de l'échéancier";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<Guid> id = new("id", "Identifiant de la ligne");
         Option<decimal?> amount = new(["--amount", "-a"], "Montant");
@@ -30,6 +30,8 @@ public class EditRepetitiveBilling : ConsoleCommand
 
         command.SetHandler(async (id, amount, frequence, saving, title, date) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/editRepetitiveBilling",
                 new EditRepetitiveBillingInput

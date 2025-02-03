@@ -11,7 +11,7 @@ public class InsertNextBilling : ConsoleCommand
 
     protected override string Description => "Insérer une ligne de compte à partir de l'échéancier";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<Guid> id = new("id", "Identifiant de la ligne");
 
@@ -19,6 +19,8 @@ public class InsertNextBilling : ConsoleCommand
 
         command.SetHandler(async (id) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/insertNextBilling",
                 new InsertNextBillingInput

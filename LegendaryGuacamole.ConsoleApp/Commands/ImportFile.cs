@@ -12,7 +12,7 @@ public class ImportFile : ConsoleCommand
 
     protected override string Description => "Importe un fichier ofx";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<FileInfo> file = new("file", Parsers.FileInfoParser, false, "le fichier à importer");
 
@@ -23,6 +23,8 @@ public class ImportFile : ConsoleCommand
 
         command.SetHandler(async (file, pageSize) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/importFile",
                 new ImportFileInput

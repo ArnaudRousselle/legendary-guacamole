@@ -12,7 +12,7 @@ public class EditBilling : ConsoleCommand
 
     protected override string Description => "Editer une ligne du compte";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<Guid> id = new("id", "Identifiant de la ligne");
         Option<decimal?> amount = new(["--amount", "-a"], "Montant");
@@ -32,6 +32,8 @@ public class EditBilling : ConsoleCommand
 
         command.SetHandler(async (id, amount, @checked, comment, saving, title, date) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/editBilling",
                 new EditBillingInput

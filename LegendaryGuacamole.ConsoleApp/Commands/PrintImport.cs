@@ -12,7 +12,7 @@ public class PrintImport : ConsoleCommand
 
     protected override string Description => "Affiche l'import en cours";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Option<int?> pageSize = new(["--pageSize", "-p"], "nombre d'éléments par page");
 
@@ -20,6 +20,8 @@ public class PrintImport : ConsoleCommand
 
         command.SetHandler(async (pageSize) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/showImport",
                 new ShowImportInput());

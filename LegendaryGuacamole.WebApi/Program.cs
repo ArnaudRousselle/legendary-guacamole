@@ -6,7 +6,7 @@ using LegendaryGuacamole.Models.Settings;
 var builder = WebApplication.CreateBuilder();
 
 WorkspaceChannel channel = new();
-var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("settings.json")) ?? throw new Exception("settings error");
+var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("../settings.json")) ?? throw new Exception("settings error");
 
 builder.Services.AddWindowsService();
 builder.Services.AddEndpointsApiExplorer();

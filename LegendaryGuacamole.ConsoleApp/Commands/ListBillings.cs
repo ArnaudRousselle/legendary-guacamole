@@ -12,7 +12,7 @@ public class ListBillings : ConsoleCommand
     protected override string Name => "list";
     protected override string Description => "Affiche l'ensemble des lignes du compte";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Option<int?> pageSize = new(["--pageSize", "-p"], "nombre d'éléments par page");
         Option<decimal?> amount = new(["--amount", "-a"], "recherche sur le montant");
@@ -32,6 +32,8 @@ public class ListBillings : ConsoleCommand
 
         command.SetHandler(async (pageSize, amount, deltaAmount, endDate, startDate, title, withChecked) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/listBillings",
                 new ListBillingsInput

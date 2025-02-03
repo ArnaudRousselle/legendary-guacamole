@@ -11,7 +11,7 @@ public class DeleteRepetitiveBilling : ConsoleCommand
 
     protected override string Description => "Supprime une ligne de l'échéancier";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<Guid> id = new("id", "Identifiant de la ligne");
 
@@ -19,6 +19,8 @@ public class DeleteRepetitiveBilling : ConsoleCommand
 
         command.SetHandler(async (id) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/deleteRepetitiveBilling",
                 new DeleteRepetitiveBillingInput

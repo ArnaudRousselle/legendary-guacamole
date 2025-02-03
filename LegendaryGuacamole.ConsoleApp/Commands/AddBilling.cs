@@ -12,7 +12,7 @@ public class AddBilling : ConsoleCommand
 
     protected override string Description => "Ajouter une ligne au compte";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Option<decimal> amount = new(["--amount", "-a"], "Montant")
         {
@@ -44,6 +44,8 @@ public class AddBilling : ConsoleCommand
 
         command.SetHandler(async (amount, @checked, comment, saving, title, date) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/addBilling",
                 new AddBillingInput

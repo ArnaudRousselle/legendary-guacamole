@@ -11,12 +11,14 @@ public class PrintImportLine : ConsoleCommand
 
     protected override string Description => "Affiche le détail d'une ligne d'import";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<string> id = new("id", "Identifiant de la ligne d'import");
 
         command.SetHandler(async (id) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/showImportLineDetail",
                 new ShowImportLineDetailInput

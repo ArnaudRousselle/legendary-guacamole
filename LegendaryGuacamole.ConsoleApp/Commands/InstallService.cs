@@ -1,5 +1,8 @@
 
 using System.CommandLine;
+using System.Diagnostics;
+using System.Text.Json;
+using LegendaryGuacamole.Models.Settings;
 
 namespace LegendaryGuacamole.ConsoleApp.Commands;
 
@@ -9,7 +12,7 @@ public class InstallService : ConsoleCommand
 
     protected override string Description => "Installe la Web API";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Option<int> port = new(["--port", "-p"], "Port")
         {
@@ -21,12 +24,27 @@ public class InstallService : ConsoleCommand
             IsRequired = true
         };
 
+        Option<string> file = new(["--file", "-f"], "File")
+        {
+            IsRequired = true
+        };
+
         command.AddOption(port);
         command.AddOption(name);
+        command.AddOption(file);
 
-        command.SetHandler(async (port, name) =>
+        command.SetHandler(async (port, name, file) =>
         {
-            //todo ARNAUD: à continuer
-        }, port, name);
+            WebApiSettings settings = new()
+            {
+                FilePath = file,
+                Port = port
+            };
+
+            File.WriteAllText("../settings.json", JsonSerializer.Serialize(settings));
+
+            using var process = Process.Start("sc.exe", $"create {name} binPath= \"../webapi/LegendaryGuacamole.WebApi.exe\" start= delayed-auto");
+            process.WaitForExit();
+        }, port, name, file);
     }
 }

@@ -11,13 +11,15 @@ public class MatchBilling : ConsoleCommand
 
     protected override string Description => "Lie une ligne d'import à une ligne du compte";
 
-    protected override void InitializeCommand(Command command, HttpClient httpClient)
+    protected override void InitializeCommand(Command command)
     {
         Argument<string> id = new("id", "Identifiant de la ligne d'import");
         Option<Guid?> billingId = new(["--billing", "-b"], "Identifiant de la ligne du compte");
 
         command.SetHandler(async (id, billingId) =>
         {
+            using var httpClient = GetHttpClient();
+
             var response = await httpClient.PostAsJsonAsync(
                 "/matchBilling",
                 new MatchBillingInput

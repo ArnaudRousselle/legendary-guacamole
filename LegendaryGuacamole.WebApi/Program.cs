@@ -2,11 +2,20 @@ using LegendaryGuacamole.WebApi.Channels;
 using LegendaryGuacamole.WebApi.Extensions;
 using LegendaryGuacamole.WebApi.Services;
 using LegendaryGuacamole.Models.Settings;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 
 WorkspaceChannel channel = new();
-var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText("../settings.json")) ?? throw new Exception("settings error");
+
+var location = Assembly.GetExecutingAssembly().Location;
+var path = Path.Combine(location[0..location.LastIndexOf('\\')], "..\\settings.json");
+
+#if DEBUG
+path = "../settings.json";
+#endif
+
+var webApiSettings = System.Text.Json.JsonSerializer.Deserialize<WebApiSettings>(File.ReadAllText(path)) ?? throw new Exception("settings error");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton(channel);

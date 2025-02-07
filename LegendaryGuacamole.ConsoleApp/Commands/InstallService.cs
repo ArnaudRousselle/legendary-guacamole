@@ -33,7 +33,7 @@ public class InstallService : ConsoleCommand
         command.AddOption(name);
         command.AddOption(file);
 
-        command.SetHandler(async (port, name, file) =>
+        command.SetHandler((port, name, file) =>
         {
             WebApiSettings settings = new()
             {
